@@ -24,7 +24,7 @@ void setCorBackground_WBR(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, vol
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para habilitar ou não determinado sprite na tela
+//Função para habilitar ou não determinado sprite na tela (640 x 480)
 void setSprite_WBR(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int ativaSprite, int cord_x, int cord_y, int offset, int registrador){
     *DATA_A_PTR = (registrador << 4) | 0b0000;
     *DATA_B_PTR = (ativaSprite << 29) | (cord_x << 19) | (cord_y << 9) | offset;
@@ -32,7 +32,7 @@ void setSprite_WBR(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile i
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para editar (mudar cor) determinado bloco do background
+//Função para editar (mudar cor) determinado bloco do background (80 x 60)
 void editBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, , int bloco_x, int bloco_y, int b, int g, int r){
     int bloco = bloco_y * 80 + bloco_x;
 
@@ -42,7 +42,7 @@ void editBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volat
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para desabilitar determinado bloco do background
+//Função para desabilitar determinado bloco do background (80 x 60)
 void desabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, , int bloco_x, int bloco_y){
     int bloco = bloco_y * 80 + bloco_x;
 
@@ -60,7 +60,7 @@ void editSprite_WSM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile 
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para exibir um triângulo na tela
+//Função para exibir um triângulo na tela (640 x 480)
 void setTriangulo_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_y, int ref_x, int ordem_impressao){
     *DATA_A_PTR = (ordem_impressao << 4) | 0b0011;
     *DATA_B_PTR = (0b1 << 31) | (b << 28) | (g << 25) | (r << 22) | (tamanho << 18) | (ref_y << 9) | ref_x;
@@ -68,7 +68,7 @@ void setTriangulo_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para exibir um quadrado na tela
+//Função para exibir um quadrado na tela (640 x 480)
 void setQuadrado_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_y, int ref_x, int ordem_impressao){
     *DATA_A_PTR = (ordem_impressao << 4) | 0b0011;
     *DATA_B_PTR = (0b0 << 31) | (b << 28) | (g << 25) | (r << 22) | (tamanho << 18) | (ref_y << 9) | ref_x;

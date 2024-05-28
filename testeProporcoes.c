@@ -116,7 +116,15 @@ int main(void){
 
 //-----------------------------------------------------------------------------------------------------------------------//
 
-    testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 7, 7, 7);
+    //Quadrado sol (amarelo)
+    setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 6, 6, 3, 240, 320, 0);
+
+    //Triangulo sol (amarelo)
+    //setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 7, 7, 7, 3, 240, 320, 1);
+
+//-----------------------------------------------------------------------------------------------------------------------//
+
+    //testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 7, 7, 7);
 
     //testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 9, 7, 7, 7);
 

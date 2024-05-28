@@ -60,7 +60,7 @@ void editSprite_WSM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile 
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para exibir um triângulo na tela (640 x 480)
+//Função para exibir um triângulo na tela (511 x 479)
 void setTriangulo_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_y, int ref_x, int ordem_impressao){
     *DATA_A_PTR = (ordem_impressao << 4) | 0b0011;
     *DATA_B_PTR = (0b1 << 31) | (b << 28) | (g << 25) | (r << 22) | (tamanho << 18) | (ref_y << 9) | ref_x;
@@ -68,7 +68,7 @@ void setTriangulo_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para exibir um quadrado na tela (640 x 480)
+//Função para exibir um quadrado na tela (511 x 479)
 void setQuadrado_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_y, int ref_x, int ordem_impressao){
     *DATA_A_PTR = (ordem_impressao << 4) | 0b0011;
     *DATA_B_PTR = (0b0 << 31) | (b << 28) | (g << 25) | (r << 22) | (tamanho << 18) | (ref_y << 9) | ref_x;
@@ -151,13 +151,13 @@ int main(void){
 
 //-----------------------------------------------------------------------------------------------------------------------//
 
-    //Sprite barra laranja
+    //Sprite barra
     setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 320, 445, 11, 1);
 
-    //Sprite diamante 1
+    //Sprite alien 1
     setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 352, 355, 22, 2);
 
-    //Sprite diamante 2
+    //Sprite alien 2
     setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 272, 355, 22, 3);
 
     //Sprite arvore 1
@@ -166,10 +166,10 @@ int main(void){
     //Sprite arvore 2
     setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 511, 461, 4, 5);
 
-    //Sprite tronco 2 marrom
+    //Sprite tronco 1
     setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 471, 463, 16, 6);
 
-    //Sprite tronco 1 marrom
+    //Sprite tronco 2
     setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 140, 463, 16, 7);
 
 //-----------------------------------------------------------------------------------------------------------------------//
@@ -193,7 +193,7 @@ int main(void){
     //Quadrado porta base (marrom)
     setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 2, 465, 320, 4);
 
-    //Quadrado porta meio (marrom)
+    //Quadrado porta topo (marrom)
     setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 2, 435, 320, 5);
 
 //-----------------------------------------------------------------------------------------------------------------------//

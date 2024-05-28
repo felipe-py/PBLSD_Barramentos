@@ -34,9 +34,9 @@ void setSprite_WBR(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile i
 }
 
 //Função para editar (mudar cor) determinado bloco do background (80 x 60)
-void editBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, , int bloco_x, int bloco_y, int b, int g, int r){
+void editBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int bloco_x, int bloco_y, int b, int g, int r){
     int bloco = bloco_y * 80 + bloco_x;
-
+    
     *DATA_A_PTR = (bloco << 4) | 0b0010;
     *DATA_B_PTR = (b << 6) | (g << 3) | r;
 
@@ -54,9 +54,9 @@ void desabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A
 }
 
 //Função para desabilitar determinado bloco do background (80 x 60)
-void testeDesabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int bloco){
+void testeDesabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int bloco, int b, int g, int r){
     *DATA_A_PTR = (bloco << 4) | 0b0010;
-    *DATA_B_PTR = 0b111111110;
+    *DATA_B_PTR = (b << 6) | (g << 3) | r;
 
     habilitaLeitura(WRREG_PTR);
 }
@@ -115,47 +115,16 @@ int main(void){
     setCorBackground_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 6, 2); 
 
 //-----------------------------------------------------------------------------------------------------------------------//
-/*
-    //ps: alterar y caso fique ruim
 
-    //Loop muda blocos da tela
-    for (int bloco_y = 0; bloco_y < 60; bloco_y++) {
-        for (int bloco_x = 0; bloco_x < 80; bloco_x++) {
-            desabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, bloco_x, bloco_y);
-        }
-    }
+    testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 7, 7, 7);
 
-//-----------------------------------------------------------------------------------------------------------------------//
-/*
+    //testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 9, 7, 7, 7);
 
-    //Loop muda blocos da tela
-    int bloco = 0;
-    while(1){
-        testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, bloco);
-        bloco++;
-        usleep(500000);
-    }
+    //testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 19, 7, 7, 7);
+
+    //testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4095, 7, 7, 7);
 
 //-----------------------------------------------------------------------------------------------------------------------//
-/*
-
-    //Sprite arvore 1
-    setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 0, 0, 4, 1);
-
-    //Sprite arvore 2
-    setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 640, 480, 4, 2);
-
-//-----------------------------------------------------------------------------------------------------------------------//
-/*
-
-    //Quadrado janela 1 (marrom)
-    setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 1, 480, 640, 0);
-
-    //Quadrado janela 2 (marrom)
-    setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 1, 0, 0, 1);
-
-//-----------------------------------------------------------------------------------------------------------------------//
-*/
 
     if (munmap(LW_virtual, LW_BRIDGE_SPAN) != 0) {
         printf("ERROR: munmap() failed...\n");

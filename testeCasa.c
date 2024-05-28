@@ -106,23 +106,48 @@ int main(void){
     setCorBackground_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 6, 4, 3); 
 
 //-----------------------------------------------------------------------------------------------------------------------//
-/*
-    //ps: alterar y caso fique ruim
 
-    //Loop muda blocos da tela
-    for (int bloco_y = 0; bloco_y < 40; bloco_y++) {
-        for (int bloco_x = 0; bloco_x < 80; bloco_x++) {
-            //Azul claro (ceu)
-            editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, bloco_x, bloco_y, 6, 2, 1);
-*/
+    //Gramas verde
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 2, 59, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 59, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 3, 58, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 59, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 58, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 2, 58, 0, 7, 0);
 
 //-----------------------------------------------------------------------------------------------------------------------//
-    
-    //Triangulo sol (amarelo)
-    setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 6, 6, 7, 53, 511, 0);
 
-    //Quadrado sol (amarelo)
-    setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 6, 6, 6, 60, 511, 1);
+    //Nuvem 1
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 10, 4, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 11, 4, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 12, 4, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 13, 4, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 10, 5, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 11, 5, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 10, 6, 7, 7, 7);
+
+    //Nuvem 2
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 25, 20, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 26, 20, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 27, 20, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 25, 21, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 26, 21, 7, 7, 7);
+    
+    //Nuvem 3
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 37, 20, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 38, 20, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 39, 20, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 39, 21, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 40, 21, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 40, 22, 7, 7, 7);
+
+    //Nuvem 4
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 58, 15, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 59, 15, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 60, 15, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 59, 16, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 60, 16, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 60, 17, 7, 7, 7);
 
 //-----------------------------------------------------------------------------------------------------------------------//
 
@@ -146,6 +171,14 @@ int main(void){
 
     //Sprite tronco 1 marrom
     setSprite_WBR(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 140, 463, 16, 7);
+
+//-----------------------------------------------------------------------------------------------------------------------//
+
+    //Quadrado sol (amarelo)
+    setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 6, 6, 6, 60, 511, 0);
+
+    //Triangulo sol (amarelo)
+    setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 0, 6, 6, 7, 53, 511, 1);
 
 //-----------------------------------------------------------------------------------------------------------------------//
     
@@ -173,9 +206,9 @@ int main(void){
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 299, 305, 8);
     //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 299, 335, 9);
-        //Triangulo teto Casa (marrom)
+    //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 299, 365, 10);
-        //Triangulo teto Casa (marrom)
+    //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 299, 395, 11);
 
 //-----------------------------------------------------------------------------------------------------------------------//

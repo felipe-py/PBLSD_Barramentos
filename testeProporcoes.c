@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/mman.h>
 
 //CONSTANTES
@@ -43,9 +44,17 @@ void editBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volat
 }
 
 //Função para desabilitar determinado bloco do background (80 x 60)
-void desabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, , int bloco_x, int bloco_y){
+void desabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int bloco_x, int bloco_y){
     int bloco = bloco_y * 80 + bloco_x;
 
+    *DATA_A_PTR = (bloco << 4) | 0b0010;
+    *DATA_B_PTR = 0b111111110;
+
+    habilitaLeitura(WRREG_PTR);
+}
+
+//Função para desabilitar determinado bloco do background (80 x 60)
+void testeDesabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int bloco){
     *DATA_A_PTR = (bloco << 4) | 0b0010;
     *DATA_B_PTR = 0b111111110;
 
@@ -110,11 +119,21 @@ int main(void){
     //ps: alterar y caso fique ruim
 
     //Loop muda blocos da tela
-    for (int bloco_y = 0; bloco_y < 59; bloco_y++) {
-        for (int bloco_x = 0; bloco_x < 79; bloco_x++) {
-            //Azul claro (ceu)
+    for (int bloco_y = 0; bloco_y < 60; bloco_y++) {
+        for (int bloco_x = 0; bloco_x < 80; bloco_x++) {
             desabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, bloco_x, bloco_y);
         }
+    }
+
+//-----------------------------------------------------------------------------------------------------------------------//
+/*
+
+    //Loop muda blocos da tela
+    int bloco = 0;
+    while(1){
+        testeDesabilitaBlocoBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, bloco);
+        bloco++;
+        usleep(500000);
     }
 
 //-----------------------------------------------------------------------------------------------------------------------//

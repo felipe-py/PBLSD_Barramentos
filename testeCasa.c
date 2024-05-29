@@ -24,7 +24,7 @@ void setCorBackground_WBR(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, vol
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para habilitar ou não determinado sprite na tela (640 x 480)
+//Função para habilitar ou não determinado sprite na tela (639 x 479)
 void setSprite_WBR(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int ativaSprite, int cord_x, int cord_y, int offset, int registrador){
     *DATA_A_PTR = (registrador << 4) | 0b0000;
     *DATA_B_PTR = (ativaSprite << 29) | (cord_x << 19) | (cord_y << 9) | offset;
@@ -32,7 +32,7 @@ void setSprite_WBR(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile i
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para editar (mudar cor) determinado bloco do background (80 x 60)
+//Função para editar (mudar cor) determinado bloco do background (79 x 59)
 void editBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int bloco_x, int bloco_y, int b, int g, int r){
     int bloco = bloco_y * 80 + bloco_x;
 
@@ -42,7 +42,7 @@ void editBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volat
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para desabilitar determinado bloco do background (80 x 60)
+//Função para desabilitar determinado bloco do background (79 x 59)
 void desabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int bloco_x, int bloco_y){
     int bloco = bloco_y * 80 + bloco_x;
 
@@ -52,7 +52,7 @@ void desabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para editar ou armazenar um pixel de um sprite na memória de sprites (endereco=pixel)
+//Função para editar ou armazenar um pixel de um sprite na memória de sprites (endereco = pixel)
 void editSprite_WSM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int endereco, int b, int g, int r){
     *DATA_A_PTR = (endereco << 4) | 0b0001;
     *DATA_B_PTR = (b << 6) | (g << 3) | r;
@@ -61,7 +61,7 @@ void editSprite_WSM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile 
 }
 
 //Função para exibir um triângulo na tela (511 x 479)
-void setTriangulo_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_y, int ref_x, int ordem_impressao){
+void setTriangulo_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_x, int ref_y, int ordem_impressao){
     *DATA_A_PTR = (ordem_impressao << 4) | 0b0011;
     *DATA_B_PTR = (0b1 << 31) | (b << 28) | (g << 25) | (r << 22) | (tamanho << 18) | (ref_y << 9) | ref_x;
 
@@ -69,7 +69,7 @@ void setTriangulo_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile
 }
 
 //Função para exibir um quadrado na tela (511 x 479)
-void setQuadrado_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_y, int ref_x, int ordem_impressao){
+void setQuadrado_DP(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int b, int g, int r, int tamanho, int ref_x, int ref_y, int ordem_impressao){
     *DATA_A_PTR = (ordem_impressao << 4) | 0b0011;
     *DATA_B_PTR = (0b0 << 31) | (b << 28) | (g << 25) | (r << 22) | (tamanho << 18) | (ref_y << 9) | ref_x;
 
@@ -108,46 +108,46 @@ int main(void){
 //-----------------------------------------------------------------------------------------------------------------------//
 
     //Gramas verde
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 2, 59, 0, 7, 0);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 59, 0, 7, 0);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 3, 58, 0, 7, 0);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 59, 0, 7, 0);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 58, 0, 7, 0);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 2, 58, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 59, 2, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 59, 1, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 58, 3, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 59, 4, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 58, 4, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 58, 2, 0, 7, 0);
 
 //-----------------------------------------------------------------------------------------------------------------------//
 
     //Nuvem 1
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 10, 4, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 11, 4, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 12, 4, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 13, 4, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 10, 5, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 11, 5, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 10, 6, 7, 7, 7);
-
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 10, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 11, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 12, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 13, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 5, 10, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 5, 11, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 6, 10, 7, 7, 7);
+   
     //Nuvem 2
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 25, 20, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 26, 20, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 27, 20, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 25, 21, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 26, 21, 7, 7, 7);
-    
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 20, 25, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 20, 26, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 20, 27, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 21, 25, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 21, 26, 7, 7, 7);
+   
     //Nuvem 3
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 37, 20, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 38, 20, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 39, 20, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 39, 21, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 40, 21, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 40, 22, 7, 7, 7);
-
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 20, 37, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 20, 38, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 20, 39, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 21, 39, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 21, 40, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 22, 40, 7, 7, 7);
+   
     //Nuvem 4
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 58, 15, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 59, 15, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 60, 15, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 59, 16, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 60, 16, 7, 7, 7);
-    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 60, 17, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 15, 58, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 15, 59, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 15, 60, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 16, 59, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 16, 60, 7, 7, 7);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 17, 60, 7, 7, 7);
 
 //-----------------------------------------------------------------------------------------------------------------------//
 

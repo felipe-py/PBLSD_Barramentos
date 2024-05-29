@@ -52,7 +52,7 @@ void desabilitaBlocoBackground_WBM(volatile int *WRREG_PTR, volatile int *DATA_A
     habilitaLeitura(WRREG_PTR);
 }
 
-//Função para editar ou armazenar um pixel de um sprite na memória de sprites (endereco=pixel)
+//Função para editar ou armazenar um pixel de um sprite na memória de sprites (endereco = pixel)
 void editSprite_WSM(volatile int *WRREG_PTR, volatile int *DATA_A_PTR, volatile int *DATA_B_PTR, int endereco, int b, int g, int r){
     *DATA_A_PTR = (endereco << 4) | 0b0001;
     *DATA_B_PTR = (b << 6) | (g << 3) | r;
@@ -114,9 +114,11 @@ int main(void){
     editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 59, 0, 7, 0);
     editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 4, 58, 0, 7, 0);
     editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 2, 58, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 3, 59, 0, 7, 0);
+    editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 5, 59, 0, 7, 0);
 
 //-----------------------------------------------------------------------------------------------------------------------//
-
+    
     //Nuvem 1
     editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 10, 4, 7, 7, 7);
     editBackground_WBM(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 11, 4, 7, 7, 7);
@@ -191,7 +193,7 @@ int main(void){
 //-----------------------------------------------------------------------------------------------------------------------//
 
     //Quadrado porta base (marrom)
-    setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 2, 320, 320, 4);
+    setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 2, 320, 465, 4);
 
     //Quadrado porta meio (marrom)
     setQuadrado_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 2, 320, 435, 5);
@@ -200,14 +202,19 @@ int main(void){
 
     //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 245, 299, 6);
+
     //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 275, 299, 7);
+
     //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 305, 299, 8);
+
     //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 335, 299, 9);
+
     //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 365, 299, 10);
+
     //Triangulo teto Casa (marrom)
     setTriangulo_DP(WRREG_PTR, DATA_A_PTR, DATA_B_PTR, 1, 2, 4, 3, 395, 299, 11);
 

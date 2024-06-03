@@ -15,11 +15,11 @@
 #define WRREG           0xc0                 // Offset para o registrador WRREG
 #define WRFULL          0xb0                 // Offser para o registrador WRFULL
 
-#define DEVICE_NAME "driver_tp01_g02"             // Nome do dispositivo
+#define DEVICE_NAME "driver_tp01_g02"        // Nome do dispositivo
 
 static struct {
-	dev_t devnum;       //Número do dispositivo
-	struct cdev cdev;   //Dispositivo de caractere   
+	dev_t devnum;           //Número do dispositivo
+	struct cdev cdev;       //Dispositivo de caractere   
 } dev_data;
 
 static void *LW_virtual;    //Endereço da ponte light-weight
@@ -30,6 +30,7 @@ static volatile int *WRREG_PTR;     //Endereço para Registrador WRREG
 static volatile int *WRFULL_PTR;    //Endereço para Registrador WRFULL
 
 static char buffer_nucleo[21];      //Buffer do driver
+static ssize_t ret;                 //Indica sucesso ou falha ao copiar buffers
 
 //Operações que podem ser realizadas
 static const struct file_operations fops = {
@@ -59,9 +60,19 @@ static int dev_close(struct inode *inodep, struct file *filep) {
 //Número de bytes a serem lidos
 static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_bytes){
     pr_info("%s: lendo!\n", DEVICE_NAME);
-
+    
     //Do Kernel para usuário
-    return copy_to_user(buffer_user, buffer_nucleo, buffer_bytes);
+    ret = copy_to_user(buffer_user, buffer_nucleo, buffer_bytes);
+
+    //Caso ret seja diferente de 0, retorna bytes que não foram copiados
+    if(ret) {
+        pr_err("%s: falha ao copiar buffer do núcleo para buffer do usuário\n", DEVICE_NAME);
+        return ret;
+    }
+
+    pr_info("%s: leitura feita com sucesso!\n", DEVICE_NAME);
+
+    return 0;
 }
 
 //Função para escrever no arquivo do dispositivo
@@ -70,17 +81,16 @@ static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_byte
 //Buffer de dados do espaço do usuário a ser armazenado
 //Número de bytes a serem lidos
 static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buffer_bytes){
-    ssize_t ret;
-
+    pr_info("%s: escrevendo!\n", DEVICE_NAME);
+    
     //Do usuário para kernel
     ret = copy_from_user(buffer_nucleo, buffer_user, buffer_bytes);
 
     //Caso ret seja diferente de 0, retorna bytes que não foram copiados
     if(ret) {
+        pr_err("%s: falha ao copiar buffer do usuário para buffer do núcleo\n", DEVICE_NAME);
         return ret;
     }
-
-    printk("%s\n", buffer_nucleo);
 
     //Inteiros para DATA_A e DATA_B
     uint32_t dataA = 0;
@@ -115,6 +125,8 @@ static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buff
     //Envia sinal para escrita na fila
     *WRREG_PTR = 1;
     *WRFULL_PTR = 0;
+
+    pr_info("%s: escrita feita com sucesso!\n", DEVICE_NAME);
 
     return 0;
 }
@@ -154,7 +166,6 @@ static int __init dev_init(void){
     WRREG_PTR = (int*) (LW_virtual + WRREG);
     WRFULL_PTR = (int*) (LW_virtual + WRFULL);
 
-    //Dispotitivo inicializado
     pr_info("%s: inicializado!\n", DEVICE_NAME);
 
     return 0;
@@ -171,8 +182,7 @@ static void __exit dev_exit(void){
     //Exclui registro de número de dispositivo alocado
     unregister_chrdev_region(dev_data.devnum, 1);
 
-    //Dispositivo encerrado
-    pr_info("%s: encerrando!\n", DEVICE_NAME);
+    pr_info("%s: encerrado!\n", DEVICE_NAME);
 }
 
 module_init(dev_init); //Macro que define a função de inicialização do módulo

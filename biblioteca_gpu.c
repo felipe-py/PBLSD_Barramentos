@@ -9,7 +9,7 @@
 #define caminhoDriver "/dev/driver_tp01_g02"
 
 //Descritor
-int fd;
+static int fd;
 
 //Buffer do usuário para enviar ao Driver
 static char buffer_user[21];

@@ -102,12 +102,6 @@ static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buff
 
         i++;
     }
-    
-    printk("%u\n", dataA);
-    printk("%u\n", dataB);
-
-    //Enquanto FIFO's estiverem cheias, espera
-    while (*WRFULL_PTR) {}
 
     //Envia instruções para as FIFO's
     *DATA_A_PTR = dataA;
@@ -115,7 +109,7 @@ static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buff
 
     //Envia sinal para escrita na fila
     *WRREG_PTR = 1;
-    *WRFULL_PTR = 0;
+    *WRREG_PTR = 0;
 
     pr_info("%s: escrita feita com sucesso!\n", DEVICE_NAME);
 
@@ -158,7 +152,7 @@ static int __init dev_init(void){
     }
 
     //Mapeia lightweight HPS-to-FPGA brigde
-    LW_virtual = ioremap(LW_BRIDGE_BASE, LW_BRIDGE_SPAN);
+    LW_virtual = ioremap_nocache(LW_BRIDGE_BASE, LW_BRIDGE_SPAN);
     
     //Mapeia barramentos e sinais
     DATA_A_PTR = (int*) (LW_virtual + DATA_A);

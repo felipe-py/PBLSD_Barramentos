@@ -144,40 +144,9 @@ A placa suporta a tecnologia de rede que permite a transmissão de dados a uma v
 
 Existem dois LEDs, LED verde (LEDG) e LED amarelo (LEDY), que representam o status da Ethernet PHY (KSZ9021RNI). A conexão da placa ao Gigabit Ethernet é estabelecida quando o LEDG acende.
 
-<h3>USB Host</h3>
+<h3>VGA</h3>
 
-A placa possui duas portas USB 2.0 tipo-A com um controlador SMSC USB3300 e um controlador de hub de 2 portas. 
-
-O dispositivo SMSC USB3300 de 32 pinos faz interface com o controlador de hub SMSC USB2512B, hub este que permite expandir o número de portas USB disponíveis na placa, permitindo que mais dispositivos USB sejam conectados. Este dispositivo suporta UTMI+ Low Pin Interface (ULPI), que se comunica com o controlador USB 2.0 em HPS. 
-
-O PHY, responsável por lidar com a camada física da comunicação USB, incluindo a modulação/demodulação de sinais elétricos, opera no modo Host conectando o pino ID do USB3300 ao terra. Ao operar no modo Host, o dispositivo é alimentado pelas duas portas USB tipo A.
-
-<h3>Botões</h3>
-
-A placa disponibiliza quatro botões para utilização. Os dados de leitura dos botões são armazenados em um registrador de dados, com seus quatro bits menos significativos representando cada um dos botões. Quando um botão é pressionado, o seu respectivo bit é setado para 1, e quando é solto, para 0.
-
-Existem outros dois registradores, o "interruptmask" e o "edgecapture". Esses registradores possuem um bit para cada botão, como o registrador de dados, porém, com funções diferentes. O "interruptmask" pode habilitar interrupções para cada botão, setando o seu respectivo bit para 1. O "edgecapture" seta o bit para 1 quando o botão é pressionado, e permanece nesse valor até que seja zerado diretamente. Setar um bit do "edgecapture" para 0 pode ser feito escrevendo o valor 1.
-
-</div>
-</div>
-
-<div id="Drives"> 
-<h2> Drives de Dispositivos de Entrada e Saída (E/S)</h2>
-<div align="justify">
-
-Para interagir com os dispositivos periféricos de hardware, é necessário empregar drivers de software. Esses drivers são programas que fornecem a interface necessária para enviar comandos e receber dados desses dispositivos. Os drivers utilizados são conhecidos como módulos de kernel, os quais podem ser carregados dinamicamente no núcleo do sistema operacional durante a execução do programa.
-
-A distribuição de Linux do DE1-SoC-UP disponibiliza módulos de kernel prontos para realizar essa comunicação. Na linguagem C, esses módulos podem ser acessados adicionando na compilação do programa o comando "-lintelfpgaup", e no código, a declaração "#include <intelfpgaup/xxx.h>", sendo "xxx", o nome do driver utilizado. A seguir, serão descritas as funções pertinentes do módulo de kernel utilizado.
-
-<h3> Botões </h3>
-
-Módulo indicado pelo nome "KEYS". As funções utilizadas são:
-
-* KEY_open: Abre a comunicação do dispositivo dos botões;
-
-* KEY_read: Lê os dados dos botões. É passado como parâmetro um ponteiro que irá setar os sinais retornados dos botões no endereço indicado (0-Não pressionado e 1-Pressionado). Se todos os botões não estão pressionados, o retorno é 0b0000. Caso todos estejam pressionados, o retorno é 0b1111.
-
-* KEY_close: Fecha a comunicação do dispositivo dos botões;
+A placa é equipada com uma saída VGA que pode ser conectada a qualquer monitor VGA padrão. A saída suporta uma resolução de 680x480, a imagem gerada é derivada de duas fontes principais, um <i>pixel buffer</i> e um <i>character buffer</i>.
 
 </div>
 </div>

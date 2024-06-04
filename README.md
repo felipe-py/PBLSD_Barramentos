@@ -65,7 +65,7 @@ A placa DE1-SoC é um kit de desenvolvimento que combina um processador ARM Cort
 Durante o projeto, o monitor DELL m782p foi utilizado para a exibição de testes e imagem final do projeto. Ele utiliza a tecnologia CRT, que utiliza tubos de rais catódicos para o seu funcionamento, a saída VGA é a utilizada pelo monitor para a recepção de imagens.
 
 <p align="center">
-  <img src="Imagens/Monitor.jpg" width = "400" />
+  <img src="Imagens/monitor.jpeg" width = "400" />
 </p>
 <p align="center"><strong>Monitor CRT DELL</strong></p>
 

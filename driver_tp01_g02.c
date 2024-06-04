@@ -73,6 +73,8 @@ static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_byte
 //Número de bytes a serem lidos
 static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buffer_bytes, loff_t *curs){
     pr_info("%s: escrevendo!\n", DEVICE_NAME);
+
+    while(*WRFULL_PTR){}
     
     //Do usuário para kernel
     ret = copy_from_user(buffer_nucleo, buffer_user, buffer_bytes);

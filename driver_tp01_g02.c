@@ -1,11 +1,11 @@
 #include <linux/kernel.h>
-#include <linux/types.h> // Para usar uint32_t
 #include <linux/module.h>
 #include <linux/init.h>
+#include <asm/io.h>
+#include <linux/uaccess.h>
 #include <linux/fs.h>
 #include <linux/cdev.h>
-#include <linux/uaccess.h>
-#include <asm/io.h>
+#include <linux/types.h> // Para usar uint32_t
 
 //Pegando as definições da biblioteca
 #define LW_BRIDGE_BASE  0xFF200000           // Endereço base do LW bridge
@@ -32,15 +32,6 @@ static volatile int *WRFULL_PTR;    //Endereço para Registrador WRFULL
 static char buffer_nucleo[21];      //Buffer do driver
 static ssize_t ret;                 //Indica sucesso ou falha ao copiar buffers
 
-//Operações que podem ser realizadas
-static const struct file_operations fops = {
-    .owner = THIS_MODULE,       //Módulo proprietário das funções (o próprio)
-    .open = dev_open,           //Abre dispositivo
-    .release = dev_close,       //Fecha dispositivo
-    .read = dev_read,           //Lê dados do dispositivo
-    .write = dev_write          //Escrever dados no dispositivo
-};
-
 //Função para quando o arquivo do dispositivo é aberto
 static int dev_open(struct inode *inodep, struct file *filep) {
     pr_info("%s: abriu!\n", DEVICE_NAME);
@@ -58,7 +49,7 @@ static int dev_close(struct inode *inodep, struct file *filep) {
 //Arquivo
 //Buffer de dados no espaço do usuário onde os dados lidos devem ser armazenados
 //Número de bytes a serem lidos
-static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_bytes){
+static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_bytes, loff_t *curs){
     pr_info("%s: lendo!\n", DEVICE_NAME);
     
     //Do Kernel para usuário
@@ -80,7 +71,7 @@ static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_byte
 //Arquivo
 //Buffer de dados do espaço do usuário a ser armazenado
 //Número de bytes a serem lidos
-static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buffer_bytes){
+static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buffer_bytes, loff_t *curs){
     pr_info("%s: escrevendo!\n", DEVICE_NAME);
     
     //Do usuário para kernel
@@ -130,6 +121,15 @@ static ssize_t dev_write(struct file *file, const char *buffer_user, size_t buff
 
     return 0;
 }
+
+//Operações que podem ser realizadas
+static const struct file_operations fops = {
+    .owner = THIS_MODULE,       //Módulo proprietário das funções (o próprio)
+    .open = dev_open,           //Abre dispositivo
+    .release = dev_close,       //Fecha dispositivo
+    .read = dev_read,           //Lê dados do dispositivo
+    .write = dev_write          //Escrever dados no dispositivo
+};
 
 //Função para inicializar o módulo
 static int __init dev_init(void){

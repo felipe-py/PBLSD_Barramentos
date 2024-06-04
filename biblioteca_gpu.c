@@ -22,10 +22,12 @@ static uint32_t dataB;
 int open_Driver(){
 
     //Abre o arquivo com permissão de escrita e leitura. Se ele já existir, sobreescreve
-    if((fd = open(caminhoDriver, O_RDWR | O_CREAT | O_TRUNC | S_IRUSR | S_IWUSR)) == -1) {
+    if ((fd = open(caminhoDriver, (O_RDWR | O_SYNC))) == -1)  {
         perror("Falha ao abrir o arquivo\n");
         return -1;
     }
+
+    printf("%d\n",fd);
 
     return 0;
 }
@@ -236,7 +238,7 @@ int limpar_tela(){
     }
 
     //Remove sprites
-    for(i=0; i<32; i++){
+    for(i=1; i<32; i++){
         if(setSprite_WBR(0,0,0,0,i) == -1){
             perror("Erro ao desabilitar sprites\n");
             break; 
@@ -279,6 +281,8 @@ int preenche_buffer(){
     
     //Formata o segundo número para ocupar 10 caracteres finais do buffer
     sprintf(buffer_user + 10, "%010" PRIu32, dataA);
+
+    printf("%s\n",buffer_user);
 
     //Lê arquivo do começo
     lseek(fd, 0, SEEK_SET);

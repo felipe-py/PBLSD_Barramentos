@@ -33,11 +33,7 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
         <li><a href="#equipamentos">  Descrição dos Equipamentos e Software Utilizados</a></li>
         <li><a href="#arq_CPU">  Arquitetura da placa DE1-SoC</a></li>
         <li><a href="#Perifericos-utilizados"> Periféricos da Placa DE1-SoC Utilizados </a></li>
-        <li><a href="#Drives"> Drives de Dispositivos de Entrada e Saída (E/S) </a></li>
-        <li><a href="#Inteface-Grafica"> Interface do Usuário </a></li>
-        <li><a href="#Regras-de-jogo"> Dinâmica e Regras de Jogo </a></li>
-        <li><a href="#Algoritmos"> Algoritmos de Jogo </a></li>
-        <li><a href="#solucao-geral"> Solução Geral do projeto </a></li>
+        <li><a href="#Arquitetura GPU"> Arquitetura da GPU utilizada </a></li>
         <li><a href="#testes"> Testes Realizados </a></li>
         <li><a href="#conclusao"> Conclusão </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
@@ -150,3 +146,9 @@ A placa é equipada com uma saída VGA que pode ser conectada a qualquer monitor
 
 </div>
 </div>
+
+<div id="Arquitetura GPU"> 
+<h2> Arquitetura da GPU usada no projeto </h2>
+<div align="justify">
+
+Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas especificações e detalhes de funcionamento.

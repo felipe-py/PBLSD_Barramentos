@@ -1,12 +1,12 @@
-#include "biblioteca_gpu.c"
+#include "biblioteca_gpu.h"
 
 int main() {
 
-    open_Driver();
+    open_driver();
 
-    setCorBackground_WBR(0,7,0);
+    set_cor_background_wbr(0,7,0);
 
-    close_Driver();
+    close_driver();
 
     return 0;
 }

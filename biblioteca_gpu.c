@@ -18,7 +18,6 @@ static char buffer_user[21];        /* Buffer do usuário para enviar ao Driver 
 */
 int 
 open_driver() {
-
     /* Abre o arquivo com permissão de escrita e leitura.*/
     fd = open(CAMINHO_DRIVER, (O_RDWR | O_SYNC));
 
@@ -36,7 +35,6 @@ open_driver() {
 */
 int 
 close_driver() {
-
     /* Fecha o arquivo */
     if (close(fd) == -1) {
         perror("Falha ao encerrar o arquivo\n");
@@ -55,7 +53,6 @@ close_driver() {
 */
 int 
 set_cor_background_wbr(int azul, int verde, int vermelho) {
-    
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7) {
         perror("Valor acima do permitido\n");
@@ -91,7 +88,6 @@ set_cor_background_wbr(int azul, int verde, int vermelho) {
 */
 int 
 set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registrador) {
-    
     /* Verificações de dados recebidos */
     if (ativa_sprite > 1 || cord_x > 639 || cord_y > 479 || offset > 31 || registrador > 31) {
         perror("Valor acima do permitido\n");
@@ -199,7 +195,6 @@ desabilita_bloco_background_wbm(int bloco_x, int bloco_y) {
 */
 int 
 edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
-    
     /* Verificações de dados recebidos */
     if (endereco > 12799 || azul > 7 || verde > 7 || vermelho > 7) {
         perror("Valor acima do permitido\n");
@@ -237,7 +232,6 @@ edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
 */
 int 
 set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
-    
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 479 || ordem_impressao > 15) {
         perror("Valor acima do permitido\n");
@@ -275,7 +269,6 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
 */
 int 
 set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
-    
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 480 || ordem_impressao > 15) {
         perror("Valor acima do permitido\n");

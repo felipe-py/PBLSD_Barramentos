@@ -301,6 +301,11 @@ int
 limpar_tela() {
     size_t i, j;
 
+    /* Remove cor do background */
+    if (set_cor_background_wbr(0, 0, 0) == -1) {
+        perror("Erro ao desabilitar cor do background\n");
+    }
+
     /* Remove blocos editados do background */
     for (i = 0; i < 80; ++i) {
         for (j = 0; j < 60; ++j) {
@@ -310,11 +315,6 @@ limpar_tela() {
                 break;
             }
         }
-    }
-
-    /* Remove cor do background */
-    if (set_cor_background_wbr(0, 0, 0) == -1) {
-        perror("Erro ao desabilitar cor do background\n");
     }
 
     /* Remove sprites */

@@ -18,6 +18,6 @@ clean:
 	rm -f /dev/driver_tp01_g02
 
 run:
-	gcc testeDriver.c biblioteca_gpu.c -o programa
+	gcc main.c biblioteca_gpu.c -std=c99 -o programa
 
 	./programa

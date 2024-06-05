@@ -9,6 +9,15 @@
 
 #define DEVICE_NAME "driver_tp01_g02"       /* Nome do dispositivo */
 
+/* Definindo endereços dos barramentos e sinais */
+#define LW_BRIDGE_BASE  0xFF200000           /* Endereço base do LW bridge */
+#define LW_BRIDGE_SPAN  0x100                /* Espaço mapeado do LW bridge */
+#define DATA_A          0x80                 /* Offset para o registrador DATA_A */
+#define DATA_B          0x70                 /* Offset para o registrador DATA_B */
+#define WRREG           0xc0                 /* Offset para o registrador WRREG */
+#define WRFULL          0xb0                 /* Offser para o registrador WRFULL */
+
+/* Estrutura para identificar e acessar dispositivos dentro do SO */
 static struct {
     dev_t devnum;                           /* Número do dispositivo */
     struct cdev cdev;                       /* Dispositivo de caractere */

@@ -15,7 +15,7 @@ static char buffer_user[21];        /* Buffer do usuário para enviar ao Driver 
 
 /**Função para inicializar comunicação com o driver
  * retorno ->       Retorna 0 caso comunicação seja iniciada ou -1 caso dê erro
-*/
+ */
 int 
 open_driver() {
     /* Abre o arquivo com permissão de escrita e leitura.*/
@@ -32,7 +32,7 @@ open_driver() {
 
 /**Função para encerrer comunicação com o driver
  * retorno ->       Retorna 0 caso comunicação seja encerrada ou -1 caso dê erro
-*/
+ */
 int 
 close_driver() {
     /* Fecha o arquivo */
@@ -50,7 +50,7 @@ close_driver() {
  *                  verde: tom de verde
  *                  vermelho: tom de vermelho
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 set_cor_background_wbr(int azul, int verde, int vermelho) {
     /* Verificações de dados recebidos */
@@ -85,7 +85,7 @@ set_cor_background_wbr(int azul, int verde, int vermelho) {
  *                  offset: escolha de um sprite (0 ao 31)
  *                  registrador: registrador onde guardar dados de um sprite (1 ao 31)
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registrador) {
     /* Verificações de dados recebidos */
@@ -121,7 +121,7 @@ set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registr
  *                  vermelho: tom de vermelho
  *                  bloco: variável usada para calcular valor referente ao endereço de memória de um bloco
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 edit_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho) {
     int bloco = bloco_y * 80 + bloco_x;
@@ -156,7 +156,7 @@ edit_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho)
  *                  bloco_y: valor da linha do bloco (0 ao 59)
  *                  bloco: variável usada para calcular valor referente ao endereço de memória de um bloco
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 desabilita_bloco_background_wbm(int bloco_x, int bloco_y) {
     int bloco = bloco_y * 80 + bloco_x;
@@ -192,7 +192,7 @@ desabilita_bloco_background_wbm(int bloco_x, int bloco_y) {
  *                  verde: tom de verde
  *                  vermelho: tom de vermelho
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
     /* Verificações de dados recebidos */
@@ -229,7 +229,7 @@ edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
  *                  ref_y: coordenada Y do ponto de referência do polígono (0 ao 479)
  *                  ordem_impressao: ordem para sobreescrever polígonos (0 ao 15)
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
     /* Verificações de dados recebidos */
@@ -266,7 +266,7 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
  *                  ref_y: coordenada Y do ponto de referência do polígono (0 ao 479)
  *                  ordem_impressao: ordem para sobreescrever polígonos (0 ao 15)
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
     /* Verificações de dados recebidos */
@@ -296,7 +296,7 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
 
 /**Função remover estruturas formadas da tela
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
-*/
+ */
 int 
 limpar_tela() {
     size_t i, j;
@@ -349,7 +349,7 @@ limpar_tela() {
 
 /**Função para transformar inteiro em string ( buffer_user = data_b + data_a ) e enviar buffer para o driver
  * retorno ->       0 caso seja bem sucedido ou n bytes caso ocorra algum erro
-*/
+ */
 ssize_t 
 preenche_buffer() {
     sprintf(buffer_user, "%010" PRIu32, data_b);                        /* Formata o primeiro número para ocupar 10 caracteres iniciais do buffer */

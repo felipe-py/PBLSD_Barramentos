@@ -7,6 +7,12 @@
 #include <linux/cdev.h>
 #include <linux/types.h>
 
+/* Metadados do driver */
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Lucas Gabriel, Luis Felipe, Lucas Lima");
+MODULE_DESCRIPTION("Driver para comunicação com uma GPU");
+MODULE_VERSION("1.0");
+
 #define DEVICE_NAME "driver_tp01_g02"       /* Nome do dispositivo */
 
 /* Definindo endereços dos barramentos e sinais */
@@ -37,7 +43,7 @@ static char buffer_nucleo[21];              /* Buffer do driver para enviar ao U
 /**Função para quando o arquivo do dispositivo é aberto
  * parâmetros ->    inodep: ponteiro para informações sobre o arquivo em nível de sistema de arquivos
  *                  filep: ponteiro para informações específicas sobre o arquivo que está sendo manipulado durante a abertura
-*/
+ */
 static int dev_open(struct inode* inodep, struct file* filep) {
     pr_info("%s: abriu!\n", DEVICE_NAME);
 
@@ -47,7 +53,7 @@ static int dev_open(struct inode* inodep, struct file* filep) {
 /**Função para quando o arquivo do dispositivo é fechado
  * parâmetros ->    inodep: ponteiro para informações sobre o arquivo em nível de sistema de arquivos
  *                  filep: ponteiro para informações específicas sobre o arquivo que está sendo manipulado durante o fechamento
-*/
+ */
 static int dev_close(struct inode* inodep, struct file* filep) {
     pr_info("%s: fechou!\n", DEVICE_NAME);
 
@@ -60,7 +66,7 @@ static int dev_close(struct inode* inodep, struct file* filep) {
  *                  buffer_bytes: número de bytes a serem lidos do dispositivo e copiados para o buffer do espaço de usuário
  *                  curs: ponteiro para a posição de leitura no arquivo
  * retorno ->       0 caso seja bem sucedido ou n bytes caso ocorra algum erro 
-*/
+ */
 static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_bytes, loff_t* curs) {
     pr_info("%s: lendo!\n", DEVICE_NAME);
     
@@ -86,7 +92,7 @@ static ssize_t dev_read(struct file* file, char* buffer_user, size_t buffer_byte
  *                  data_a: variável para guardar valor inteiro convertido do buffer, dados a serem enviados ao registrador DATA_A
  *                  data_b: variável para guardar valor inteiro convertido do buffer, dados a serem enviados ao registrador DATA_B
  * retorno ->       0 caso seja bem sucedido ou n bytes caso ocorra algum erro 
-*/
+ */
 static ssize_t dev_write(struct file* file, const char* buffer_user, size_t buffer_bytes, loff_t* curs) {
     pr_info("%s: escrevendo!\n", DEVICE_NAME);
 
@@ -107,12 +113,19 @@ static ssize_t dev_write(struct file* file, const char* buffer_user, size_t buff
 
     int i = 0;
 
+    /* É usado para construir um número inteiro a partir de uma sequência de caracteres numéricos. 
+    Cada iteração do loop multiplica o valor atual das variáveis por 10 (deslocando os dígitos para
+    a esquerda - inteiro decimal) e adiciona o valor do próximo dígito, convertendo-o de caractere 
+    para número. Isso resulta na construção de um número inteiro a partir dos caracteres sequenciais 
+    no buffer. No sistema de codificação ASCII, os caracteres numéricos '0' a '9' são representados 
+    por valores consecutivos (48 a 57). Subtraindo o valor ASCII do caractere '0' (que é 48) do valor
+    ASCII de outro caractere numérico, obtemos o valor numérico correspondente.
+    Por exemplo, '9' - '0' = 57 - 48 = 9.*/ 
+
     for (i = 0; i < 20; ++i) {
-        if (i < 10) {
-            /* Pega 10 primeiros números do buffer */
-            data_b = data_b * 10 + (buffer_nucleo[i] - '0');
-        } else {
-            /* Pega os outros 10 números do buffer */
+        if (i < 10) {       /* Pega 10 primeiros caracteres do buffer e converte para número */
+            data_b = data_b * 10 + (buffer_nucleo[i] - '0');   
+        } else {            /* Pega os outros 10 caracteres do buffer e converte para número */
             data_a = data_a * 10 + (buffer_nucleo[i] - '0');
         }
     }
@@ -142,11 +155,11 @@ static const struct file_operations fops = {
 /**Função para inicializar o módulo
  * parâmetros ->    result: variável para guardar retorno de algumas operações
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro 
-*/
+ */
 static int __init dev_init(void) {
     int result;
 
-    result = alloc_chrdev_region(&dev_data.devnum, 0, 1, DEVICE_NAME);      /* Aloca número do dispositivo */
+    result = alloc_chrdev_region(&dev_data.devnum, 0, 1, DEVICE_NAME);      /* Kernel aloca dinamicamente número de dispositivo disponível (major) */
 
     /* Se for diferente de 0, deu erro */
     if (result) {
@@ -159,7 +172,7 @@ static int __init dev_init(void) {
 
     result = cdev_add(&dev_data.cdev, dev_data.devnum, 1);          /* Registra dispositivo de caractere no kernel do Linux e associa seu número */
 
-    /* Se for diferente de 0, deu erro */
+    /* Se for diferente de 0, exclui registro de número de dispositivo alocado */
     if (result) {
         pr_err("%s: erro no registro do dispositivo char!\n", DEVICE_NAME);
         unregister_chrdev_region(dev_data.devnum, 1);
@@ -167,7 +180,7 @@ static int __init dev_init(void) {
         return result;
     }
 
-    lw_virtual = ioremap_nocache(LW_BRIDGE_BASE, LW_BRIDGE_SPAN);   /* Mapeia lightweight HPS-to-FPGA brigde */
+    lw_virtual = ioremap_nocache(LW_BRIDGE_BASE, LW_BRIDGE_SPAN);   /* Mapeia ponte lightweight */
     
     /* Mapeia barramentos e sinais */
     data_a_ptr = (int*) (lw_virtual + DATA_A);

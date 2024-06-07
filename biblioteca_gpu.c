@@ -231,7 +231,10 @@ edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
  */
 int 
-set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
+set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) { 
+    /* Verifica se coordenadas x e y estão dentro do limite permitido a depender do tamanho escolhido */
+    size_t limite = 5 * (tamanho - 1) + 9;
+    
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 479 || ordem_impressao > 15) {
         perror("Valor acima do permitido\n");
@@ -239,6 +242,10 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
         return -1;
     } else if (azul < 0 || verde < 0 || vermelho < 0 || tamanho < 0 || ref_x < 0 || ref_y < 0 || ordem_impressao < 0) {
         perror("Valor abaixo do permitido\n");
+
+        return -1;
+    } else if (ref_x <= limite || ref_y <= limite) {
+        perror("Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
 
         return -1;
     }
@@ -269,6 +276,9 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
  */
 int 
 set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
+    /* Verifica se coordenadas x e y estão dentro do limite permitido a depender do tamanho escolhido */
+    size_t limite = 5 * (tamanho - 1) + 9;
+
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 480 || ordem_impressao > 15) {
         perror("Valor acima do permitido\n");
@@ -276,6 +286,10 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
         return -1;
     } else if (azul < 0 || verde < 0 || vermelho < 0 || tamanho < 0 || ref_x < 0 || ref_y < 0 || ordem_impressao < 0) {
         perror("Valor abaixo do permitido\n");
+
+        return -1;
+    } else if (ref_x <= limite || ref_y <= limite) {
+        perror("Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
 
         return -1;
     }

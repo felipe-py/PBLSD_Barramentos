@@ -40,11 +40,11 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
 int 
 set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao);
 
-/* Função remover estruturas formadas da tela */
+/* Função remover estruturas formadas na tela */
 int 
 limpar_tela();
 
-/* Função para transformar inteiro em string ( buffer_user = data_b + data_a ) e enviar buffer para o driver */
+/* Função para transformar inteiro em char ( buffer_user = data_b + data_a ) e enviar buffer para o driver */
 int 
 preenche_buffer();
 

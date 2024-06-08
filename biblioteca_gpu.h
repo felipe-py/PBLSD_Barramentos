@@ -4,6 +4,15 @@
 /* Caminho do Driver */
 #define CAMINHO_DRIVER "/dev/driver_tp01_g02"
 
+/* Erros associados a cada função */
+#define ERRO_SET_COR_BACKGROUND "Erro ao mudar cor base do background: "
+#define ERRO_SET_SPRITE "Erro ao exibir sprite: "
+#define ERRO_EDIT_BLOCO_BACKGROUND "Erro ao editar bloco do background: "
+#define ERRO_DESABILITA_BLOCO_BACKGROUND "Erro ao desabilitar bloco do background: "
+#define ERRO_EDIT_SPRITE "Erro ao editar pixel do sprite: "
+#define ERRO_SET_QUADRADO "Erro ao exibir um quadrado: "
+#define ERRO_SET_TRIANGULO "Erro ao exibir um triângulo: "
+
 /* Função para inicializar comunicação com o driver */
 int 
 open_driver();
@@ -22,7 +31,7 @@ set_sprite_wbr(int ativaSprite, int cord_x, int cord_y, int offset, int registra
 
 /* Função para editar um bloco do background */
 int 
-edit_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho);
+edit_bloco_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho);
 
 /* Função para desabilitar um bloco do background */
 int 

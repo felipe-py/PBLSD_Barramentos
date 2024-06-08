@@ -13,67 +13,67 @@ int main() {
 //-----------------------------------------------------------------------------------------------------------------------//
 
     //Grama verde 1
-    edit_background_wbm(2, 59, 0, 7, 0);
-    edit_background_wbm(1, 59, 0, 7, 0);
-    edit_background_wbm(3, 58, 0, 7, 0);
-    edit_background_wbm(4, 59, 0, 7, 0);
-    edit_background_wbm(4, 58, 0, 7, 0);
-    edit_background_wbm(2, 58, 0, 7, 0);
-    edit_background_wbm(3, 59, 0, 7, 0);
-    edit_background_wbm(5, 59, 0, 7, 0);
+    edit_bloco_background_wbm(2, 59, 0, 7, 0);
+    edit_bloco_background_wbm(1, 59, 0, 7, 0);
+    edit_bloco_background_wbm(3, 58, 0, 7, 0);
+    edit_bloco_background_wbm(4, 59, 0, 7, 0);
+    edit_bloco_background_wbm(4, 58, 0, 7, 0);
+    edit_bloco_background_wbm(2, 58, 0, 7, 0);
+    edit_bloco_background_wbm(3, 59, 0, 7, 0);
+    edit_bloco_background_wbm(5, 59, 0, 7, 0);
 
     //Grama verde 2
-    edit_background_wbm(77, 59, 0, 7, 0);
-    edit_background_wbm(78, 59, 0, 7, 0);
-    edit_background_wbm(76, 58, 0, 7, 0);
-    edit_background_wbm(75, 59, 0, 7, 0);
-    edit_background_wbm(75, 58, 0, 7, 0);
-    edit_background_wbm(77, 58, 0, 7, 0);
-    edit_background_wbm(76, 59, 0, 7, 0);
-    edit_background_wbm(74, 59, 0, 7, 0);
+    edit_bloco_background_wbm(77, 59, 0, 7, 0);
+    edit_bloco_background_wbm(78, 59, 0, 7, 0);
+    edit_bloco_background_wbm(76, 58, 0, 7, 0);
+    edit_bloco_background_wbm(75, 59, 0, 7, 0);
+    edit_bloco_background_wbm(75, 58, 0, 7, 0);
+    edit_bloco_background_wbm(77, 58, 0, 7, 0);
+    edit_bloco_background_wbm(76, 59, 0, 7, 0);
+    edit_bloco_background_wbm(74, 59, 0, 7, 0);
 
 //-----------------------------------------------------------------------------------------------------------------------//
     
     //Nuvem 1
-    edit_background_wbm(10, 4, 7, 7, 7);
-    edit_background_wbm(11, 4, 7, 7, 7);
-    edit_background_wbm(12, 4, 7, 7, 7);
-    edit_background_wbm(13, 4, 7, 7, 7);
-    edit_background_wbm(10, 5, 7, 7, 7);
-    edit_background_wbm(11, 5, 7, 7, 7);
-    edit_background_wbm(10, 6, 7, 7, 7);
+    edit_bloco_background_wbm(10, 4, 7, 7, 7);
+    edit_bloco_background_wbm(11, 4, 7, 7, 7);
+    edit_bloco_background_wbm(12, 4, 7, 7, 7);
+    edit_bloco_background_wbm(13, 4, 7, 7, 7);
+    edit_bloco_background_wbm(10, 5, 7, 7, 7);
+    edit_bloco_background_wbm(11, 5, 7, 7, 7);
+    edit_bloco_background_wbm(10, 6, 7, 7, 7);
 
     //Nuvem 2
-    edit_background_wbm(25, 20, 7, 7, 7);
-    edit_background_wbm(26, 20, 7, 7, 7);
-    edit_background_wbm(27, 20, 7, 7, 7);
-    edit_background_wbm(25, 21, 7, 7, 7);
-    edit_background_wbm(26, 21, 7, 7, 7);
+    edit_bloco_background_wbm(25, 20, 7, 7, 7);
+    edit_bloco_background_wbm(26, 20, 7, 7, 7);
+    edit_bloco_background_wbm(27, 20, 7, 7, 7);
+    edit_bloco_background_wbm(25, 21, 7, 7, 7);
+    edit_bloco_background_wbm(26, 21, 7, 7, 7);
     
     //Nuvem 3
-    edit_background_wbm(37, 20, 7, 7, 7);
-    edit_background_wbm(38, 20, 7, 7, 7);
-    edit_background_wbm(39, 20, 7, 7, 7);
-    edit_background_wbm(39, 21, 7, 7, 7);
-    edit_background_wbm(40, 21, 7, 7, 7);
-    edit_background_wbm(40, 22, 7, 7, 7);
+    edit_bloco_background_wbm(37, 20, 7, 7, 7);
+    edit_bloco_background_wbm(38, 20, 7, 7, 7);
+    edit_bloco_background_wbm(39, 20, 7, 7, 7);
+    edit_bloco_background_wbm(39, 21, 7, 7, 7);
+    edit_bloco_background_wbm(40, 21, 7, 7, 7);
+    edit_bloco_background_wbm(40, 22, 7, 7, 7);
 
     //Nuvem 4
-    edit_background_wbm(58, 17, 7, 7, 7);
-    edit_background_wbm(59, 17, 7, 7, 7);
-    edit_background_wbm(60, 17, 7, 7, 7);
-    edit_background_wbm(59, 18, 7, 7, 7);
-    edit_background_wbm(60, 18, 7, 7, 7);
-    edit_background_wbm(60, 19, 7, 7, 7);
+    edit_bloco_background_wbm(58, 17, 7, 7, 7);
+    edit_bloco_background_wbm(59, 17, 7, 7, 7);
+    edit_bloco_background_wbm(60, 17, 7, 7, 7);
+    edit_bloco_background_wbm(59, 18, 7, 7, 7);
+    edit_bloco_background_wbm(60, 18, 7, 7, 7);
+    edit_bloco_background_wbm(60, 19, 7, 7, 7);
 
     //Nuvem 5
-    edit_background_wbm(32, 11, 7, 7, 7);
-    edit_background_wbm(33, 11, 7, 7, 7);
-    edit_background_wbm(34, 11, 7, 7, 7);
-    edit_background_wbm(35, 11, 7, 7, 7);
-    edit_background_wbm(32, 10, 7, 7, 7);
-    edit_background_wbm(33, 10, 7, 7, 7);
-    edit_background_wbm(32, 10, 7, 7, 7);
+    edit_bloco_background_wbm(32, 11, 7, 7, 7);
+    edit_bloco_background_wbm(33, 11, 7, 7, 7);
+    edit_bloco_background_wbm(34, 11, 7, 7, 7);
+    edit_bloco_background_wbm(35, 11, 7, 7, 7);
+    edit_bloco_background_wbm(32, 10, 7, 7, 7);
+    edit_bloco_background_wbm(33, 10, 7, 7, 7);
+    edit_bloco_background_wbm(32, 10, 7, 7, 7);
 
 //-----------------------------------------------------------------------------------------------------------------------//
 

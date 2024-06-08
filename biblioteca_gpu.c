@@ -52,10 +52,10 @@ int
 set_cor_background_wbr(int azul, int verde, int vermelho) {
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7) {
-        fprintf(stderr, "Valor acima do permitido\n");
+        fprintf(stderr, ERRO_SET_COR_BACKGROUND"Valor acima do permitido\n");
         return -1;
     } else if (azul < 0 || verde < 0 || vermelho < 0) {
-        fprintf(stderr, "Valor abaixo do permitido\n");
+        fprintf(stderr, ERRO_SET_COR_BACKGROUND"Valor abaixo do permitido\n");
         return -1;
     }
     
@@ -65,7 +65,7 @@ set_cor_background_wbr(int azul, int verde, int vermelho) {
 
     /* Tenta enviar dados para o Driver */
     if (preenche_buffer()) {
-        fprintf(stderr, "Erro ao mudar cor base do background\n");
+        fprintf(stderr, ERRO_SET_COR_BACKGROUND"Falha na escrita\n");
         return -1;
     }
 
@@ -84,10 +84,10 @@ int
 set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registrador) {
     /* Verificações de dados recebidos */
     if (ativa_sprite > 1 || cord_x > 639 || cord_y > 479 || offset > 31 || registrador > 31) {
-        fprintf(stderr, "Valor acima do permitido\n");
+        fprintf(stderr, ERRO_SET_SPRITE"Valor acima do permitido\n");
         return -1;
     } else if (ativa_sprite < 0 || cord_x < 0 || cord_y < 0 || offset < 0 || registrador < 1) {
-        fprintf(stderr, "Valor abaixo do permitido\n");
+        fprintf(stderr, ERRO_SET_SPRITE"Valor abaixo do permitido\n");
         return -1;
     }
 
@@ -97,7 +97,7 @@ set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registr
 
     /* Tenta enviar dados para o Driver */
     if (preenche_buffer()) {
-        fprintf(stderr, "Erro ao exibir sprite\n");
+        fprintf(stderr, ERRO_SET_SPRITE"Falha na escrita\n");
         return -1;
     }
 
@@ -114,15 +114,15 @@ set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registr
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
  */
 int 
-edit_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho) {
+edit_bloco_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho) {
     int bloco = bloco_y * 80 + bloco_x;
     
     /* Verificações de dados recebidos */
     if (bloco > 4799 || azul > 7 || verde > 7 || vermelho > 7) {
-        fprintf(stderr, "Valor acima do permitido\n");
+        fprintf(stderr, ERRO_EDIT_BLOCO_BACKGROUND"Valor acima do permitido\n");
         return -1;
     } else if (bloco < 0 || azul < 0 || verde < 0 || vermelho < 0) {
-        fprintf(stderr, "Valor abaixo do permitido\n");
+        fprintf(stderr, ERRO_EDIT_BLOCO_BACKGROUND"Valor abaixo do permitido\n");
         return -1;
     }
     
@@ -132,7 +132,7 @@ edit_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho)
 
     /* Tenta enviar dados para o Driver */
     if (preenche_buffer()) {
-        fprintf(stderr, "Erro ao editar bloco do background\n");
+        fprintf(stderr, ERRO_EDIT_BLOCO_BACKGROUND"Falha na escrita\n");
         return -1;
     }
 
@@ -151,10 +151,10 @@ desabilita_bloco_background_wbm(int bloco_x, int bloco_y) {
     
     /* Verificações de dados recebidos */
     if (bloco > 4799) {
-        fprintf(stderr, "Valor acima do permitido\n");
+        fprintf(stderr, ERRO_DESABILITA_BLOCO_BACKGROUND"Valor acima do permitido\n");
         return -1;
     } else if (bloco < 0) {
-        fprintf(stderr, "Valor abaixo do permitido\n");
+        fprintf(stderr, ERRO_DESABILITA_BLOCO_BACKGROUND"Valor abaixo do permitido\n");
         return -1;
     }
 
@@ -164,7 +164,7 @@ desabilita_bloco_background_wbm(int bloco_x, int bloco_y) {
 
     /* Tenta enviar dados para o Driver */
     if (preenche_buffer()) {
-        fprintf(stderr, "Erro ao desabilitar bloco do background\n");
+        fprintf(stderr, ERRO_DESABILITA_BLOCO_BACKGROUND"Falha na escrita\n");
         return -1;
     }
 
@@ -182,10 +182,10 @@ int
 edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
     /* Verificações de dados recebidos */
     if (endereco > 12799 || azul > 7 || verde > 7 || vermelho > 7) {
-        fprintf(stderr, "Valor acima do permitido\n");
+        fprintf(stderr, ERRO_EDIT_SPRITE"Valor acima do permitido\n");
         return -1;
     } else if (endereco < 0 || azul < 0 || verde < 0 || vermelho < 0) {
-        fprintf(stderr, "Valor abaixo do permitido\n");
+        fprintf(stderr, ERRO_EDIT_SPRITE"Valor abaixo do permitido\n");
         return -1;
     }
     
@@ -195,7 +195,7 @@ edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
 
     /* Tenta enviar dados para o Driver */
     if (preenche_buffer()) {
-        fprintf(stderr, "Erro ao editar pixel do sprite\n");
+        fprintf(stderr, ERRO_EDIT_SPRITE"Falha na escrita\n");
         return -1;
     }
 
@@ -219,13 +219,13 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
     
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 479 || ordem_impressao > 15) {
-        fprintf(stderr, "Valor acima do permitido\n");
+        fprintf(stderr, ERRO_SET_QUADRADO"Valor acima do permitido\n");
         return -1;
     } else if (azul < 0 || verde < 0 || vermelho < 0 || tamanho < 0 || ref_x < 0 || ref_y < 0 || ordem_impressao < 0) {
-        fprintf(stderr, "Valor abaixo do permitido\n");
+        fprintf(stderr, ERRO_SET_QUADRADO"Valor abaixo do permitido\n");
         return -1;
     } else if (ref_x <= limite || ref_y <= limite) {
-        fprintf(stderr, "Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
+        fprintf(stderr, ERRO_SET_QUADRADO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
         return -1;
     }
     
@@ -235,7 +235,7 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
 
     /* Tenta enviar dados para o Driver */
     if (preenche_buffer()) {
-        fprintf(stderr, "Erro ao exibir um quadrado\n");
+        fprintf(stderr, ERRO_SET_QUADRADO"Falha na escrita\n");
         return -1;
     }
 
@@ -259,13 +259,13 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
 
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 480 || ordem_impressao > 15) {
-        fprintf(stderr, "Valor acima do permitido\n");
+        fprintf(stderr, ERRO_SET_TRIANGULO"Valor acima do permitido\n");
         return -1;
     } else if (azul < 0 || verde < 0 || vermelho < 0 || tamanho < 0 || ref_x < 0 || ref_y < 0 || ordem_impressao < 0) {
-        fprintf(stderr, "Valor abaixo do permitido\n");
+        fprintf(stderr, ERRO_SET_TRIANGULO"Valor abaixo do permitido\n");
         return -1;
     } else if (ref_x <= limite || ref_y <= limite) {
-        fprintf(stderr, "Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
+        fprintf(stderr, ERRO_SET_TRIANGULO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
         return -1;
     }
     
@@ -275,7 +275,7 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
 
     /* Tenta enviar dados para o Driver */
     if (preenche_buffer()) {
-        fprintf(stderr, "Erro ao exibir um triângulo\n");
+        fprintf(stderr, ERRO_SET_TRIANGULO"Falha na escrita\n");
         return -1;
     }
 

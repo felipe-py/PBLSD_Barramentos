@@ -244,6 +244,15 @@ O campo endereço indica a posição de memória em que a instrução será arma
 </p>
 <p align="center"><strong> Relação numérica do tamanho do polígono</strong></p>
 
+<h3>Comunicação com a GPU</h3>
+
+Para realizar a comunicação com o processador gráfico são utilizadas duas FIFOs (First In First Out) e um módulo gerador de pulso. O acesso as GPIOs (General-Purpose Input/Output) será feito pelo mapeamento de memória em que são associados determinados endereços de memória as entradas e saídas do sistema, assim garantindo acesso a todos os sinais e barramentos conectados no Nios II (Processador de Propósito geral do sistema) que permite, se fazendo uso de instruções personalizadas, realizar a distribuição dos campos das instruções do processador gráfico dentro dos barramentos “dataA” e “dataB” no momento do envio das informações.
+
+O barramento “dataA” é usado para opcodes e endereçamento do banco de registradores e memórias, enquanto que o barramento “dataB” é usado para o envio de dados a serem armazenados e/ou atualizados.
+
+Com as instruções já devidamente alocadas em seus respectivos barramentos é necessário que o módulo gerador de pulso dê o sinal para permitir a escrita dessas informações nas FIFOs (uma para cada barramento) em um único pulso de clock que imediatamente após o envio da informação irá interromper esse sinal. Esse funcionamento que garante que a informação não será escrita múltiplas vezes enquanto o sistema esteja recebendo energia.
+
+
 </div>
 </div>
 
@@ -312,6 +321,14 @@ A GPU também consegue realizar a renderização de triângulos, a função cria
 Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela zera os atributos do background para apaga-lo, além de remover utilizando laços do tipo for em todos os itens renderizados. 
 
 Para apagar os blocos editados do background, dois laços aninhados percorrem de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente. Na remoção dos sprites e poligonos os laços funcionam chamando as respectivas funções responsáveis por cada item criado, todos os parâmetros de envio são zerados, a iteração passa por cada registrador para limpar os sprites e por cada posição na fila para desabilitar os polígonos.
+
+<h4>Visualizando as funções</h4>
+A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definição de cada função explicada anteriormente, seus parâmetros e tipagem do retorno de cada uma delas.
+
+<p align="center">
+  <img src="Imagens/definicao_funcoes.png" width = "600" />
+</p>
+<p align="center"><strong> Definição de cada uma das funções no arquivo de cabeçalho</strong></p>
 
 </div>
 </div>

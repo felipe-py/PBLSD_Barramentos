@@ -326,7 +326,7 @@ Para apagar os blocos editados do background, dois laços aninhados percorrem de
 A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definição de cada função explicada anteriormente, seus parâmetros e tipagem do retorno de cada uma delas.
 
 <p align="center">
-  <img src="Imagens/definicao_funcoes.png" width = "600" />
+  <img src="Imagens/definicao_funcoes.png" width = "700" />
 </p>
 <p align="center"><strong> Definição de cada uma das funções no arquivo de cabeçalho</strong></p>
 

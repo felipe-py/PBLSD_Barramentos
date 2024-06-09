@@ -30,11 +30,13 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 <div id="sumario">
 	<ul>
         <li><a href="#equipamentos">  Descrição dos Equipamentos e Software Utilizados</a></li>
-        <li><a href="#arq_CPU">  Arquitetura da placa DE1-SoC</a></li>
+        <li><a href="#arq_CPU">  Arquitetura da placa DE1-SoC
+        </a></li>
         <li><a href="#Perifericos-utilizados"> Periféricos da Placa DE1-SoC Utilizados </a></li>
-        <li><a href="#Arquitetura GPU"> Arquitetura da GPU utilizada </a></li>
-	<li><a href="#Biblioteca uso GPU"> Biblioteca criada para uso da GPU </a></li>
-        <li><a href="#testes"> Testes Realizados </a></li>
+        <li><a href="#Arquitetura GPU"> Arquitetura da GPU</a></li>
+        <li><a href="#Driver uso GPU"> Driver para comunicação com a GPU </a></li>
+	      <li><a href="#Biblioteca uso GPU"> Biblioteca para uso da GPU </a></li>
+        <li><a href="#testes"> Testes</a></li>
         <li><a href="#conclusao"> Conclusão </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
         <li><a href="#referencias"> Referências </a></li>
@@ -158,14 +160,6 @@ A placa é equipada com uma porta de saída de vídeo com um controlador VGA, qu
 
 Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas especificações e detalhes de funcionamento.
 
-<h3>Introdução</h3>
-
-GPU é uma sigla para Graphics Processing Unit, ou uma unidade de processamento gráfico, que nada mais é do que um circuito eletrônico capaz de realizar cálculos matemáticos em alta velocidade, se destacando em relação à CPU devido a sua eficiência em operações que demandam um alto nível de paralelismo.
-
-Para tarefas que exigem a execução de diferentes funções de forma independente, é comum de se fracionar a carga de trabalho em pequenas execuções que, no caso de uma GPU, podem ser alocados a cada um de seus núcleos.
-
-Em aplicações gráficas como jogos, seu uso é comumente associado ao gerenciamento do processo de renderização e, se utilizando de um conjunto de instruções previamente definidas, mover e controlar elementos gráficos (tal como polígonos e sprites) e o layout do background da tela.
-
 A GPU usada neste projeto possui capacidade de renderizar uma tela de 640 x 480 pixels que será projetada em monitor com o padrão VGA possuindo frequência de 60 quadros por segundo (*QPS* ou *FPS*), podendo projetar nessa tela, além de uma cor de fundo, 2 tipos de polígonos convexos (quadrado e triângulo) ou um conjunto predefinido de sprites (já previamente alocados em memória física).
 
 <h3>Módulos internos</h3>
@@ -189,18 +183,18 @@ Os módulos presentes nessa GPU, além do decodificador de instrução (cuja fun
 
 1. Memória de Sprites: armazena o bitmap para cada sprite. (12.800 palavras de 9-bits, 3 bits para cada componente RGB). Cada sprite possui tamanho de 20x20 pixels, ocupando de forma unitária 400 posições de memória.
 
-1. Memória de Background: funcionamento similar a memória de sprites, porém utilizada para modificar pequenas partes do background. Consiste em 4.800 palavras de 9-bits
+1. Memória de Background: funcionamento similar a memória de sprites, porém utilizada para modificar pequenas partes do background. Consiste em 4.800 palavras de 9-bits, logo, 4800 blocos editáveis.
 
-1. Co-Processador: resposável por gerenciar aconstrução de polígonos convexos do tipo Quadrado e Triângulo (unidades de cálculo são responsáveis por executar as etapas de definição e análise de colinearidade dos polígonos em relação aos pixels da tela.).
+1. Co-Processador: resposável por gerenciar a construção de polígonos convexos do tipo Quadrado e Triângulo (unidades de cálculo são responsáveis por executar as etapas de definição e análise de colinearidade dos polígonos em relação aos pixels da tela).
 
 1. Gerador RGB: escolhe a cor que será gerada no pixel em caso de haver 2, ou mais, estruturas naquela mesma região (prioridade: sprite → polígono → background)
 
-<h3>Comandos e funções</h3>
+<h3>Instruções do Processador Gráfico</h3>
 
-<h4>Escrita no Banco de Registradores (WBR):</h4> 
+<h4><b>Escrita no Banco de Registradores (WBR):</b></h4> 
 
 Essa instrução é responsável por configurar os registradores que armazenam as informações dos sprites e a cor base do background. O *opcode* dessa função é 0000.
-A primeira forma dessa instrução se dá quando queremos mudar a cor de background, e usa um *opcode* (4 bits) para identificar a operação, o registrador (5 bits, para representar 32 possíveis registradores) que irá guardar a informação da cor do background e em seguida a sequência que indica a cor do background em em RGB (9 bits, 3 para codificar cada cor RGB).
+A primeira forma dessa instrução se dá quando queremos mudar a cor de background, e usa um *opcode* (4 bits) para identificar a operação, o registrador (5 bits, para representar 32 possíveis registradores) que irá guardar a informação da cor do background e em seguida a sequência que indica a cor do background em RGB (9 bits, 3 para codificar cada cor RGB).
 
 <p align="center">
   <img src="Imagens/instrucao_WBR.png" width = "600" />
@@ -215,10 +209,10 @@ A segunda forma da instrução se dá quando queremos manipular algum sprite, co
 <p align="center"><strong> Formato instrução WBR (2)</strong></p>
 
 
-<h4>Escrita na Memória de Sprites (WSM):</h4> 
+<h4><b>Escrita na Memória de Sprites (WSM):</b></h4> 
 
 Essa instrução armazena ou modifica o conteúdo presente na Memória de Sprites. O *opcode* dessa função é 0001.
-Essa instrução, além do *opcode* (4 bits), possui um campo para inserção do endereço de memória (16 bits, para representar todos so endereços da memória de sprites) seguido por outro campo para os novos valores de cor (9 bits, 3 para cada cor RGB).
+Essa instrução, além do *opcode* (4 bits), possui um campo para inserção do endereço de memória (14 bits, para representar todos so endereços da memória de sprites) seguido por outro campo para os novos valores de cor (9 bits, 3 para cada cor RGB).
 
 <p align="center">
   <img src="Imagens/instrucao_WSM.png" width = "600" />
@@ -226,10 +220,12 @@ Essa instrução, além do *opcode* (4 bits), possui um campo para inserção do
 <p align="center"><strong> Formato instrução WSM</strong></p>
 
 
-<h4>Escrita na Memória de Background (WBM):</h4> Essa instrução armazena ou modifica o conteúdo presente na Memória de Background. Sua função é configurar valores RGB para o preenchimento de áreas do background. O *opcode* dessa função é 0010.
-Similar a WSM, contudo o endereço de memória conta apenas com 12 bits, devido ao tamanho reduzido da memória de background em comparação a memória de sprites.
+<h4><b>Escrita na Memória de Background (WBM):</b></h4> 
 
-<h4>Definição de um Polígono (DP):</h4> 
+Essa instrução armazena ou modifica o conteúdo presente na Memória de Background. Sua função é configurar valores RGB para o preenchimento de áreas do background. O <i>opcode</i> dessa função é 0010.
+Similar a WSM, diferenciado-se apenas na quantidade de bits do campo <i>endereço de memória</i>, que apesar de constar 12 bits no documento da GPU, foi comprovado que possui pelo menos um bit a mais, visto que com 12 bits só seria possível editar 4096 endereços da memória de background e através de testes, foi possível alterar 4800 endereços. O background é dividido em 4800 blocos onde cada endereço na memória de background, corresponde a um bloco. Se um endereço recebe o valor 510, o Módulo de Desenho desabilita o bloco.
+
+<h4><b>Definição de um Polígono (DP):</b></h4> 
 
 Essa instrução é utilizada para modificar o conteúdo da Memória de Instrução do Co-Processador, de forma a definir os dados referentes a um polígono que deve ser renderizado. O *opcode* dessa função é 0011.
 O campo endereço indica a posição de memória em que a instrução será armazenada (4 bits), em seguida são passadas as coordenadas do ponto de referência para o polígono (9 bits cada), em seguida pelo tamanho do polígono (4 bits, ver a tabela), com a cor do polígono em RGB (9 bits, 3 para cada cor) e o bit de forma que indica se tratar de um quadrado (0), ou triângulo (1).
@@ -246,7 +242,7 @@ O campo endereço indica a posição de memória em que a instrução será arma
 
 <h3>Comunicação com a GPU</h3>
 
-Para realizar a comunicação com o processador gráfico são utilizadas duas FIFOs (First In First Out) e um módulo gerador de pulso. O acesso as GPIOs (General-Purpose Input/Output) será feito pelo mapeamento de memória em que são associados determinados endereços de memória as entradas e saídas do sistema, assim garantindo acesso a todos os sinais e barramentos conectados no Nios II (Processador de Propósito geral do sistema) que permite, se fazendo uso de instruções personalizadas, realizar a distribuição dos campos das instruções do processador gráfico dentro dos barramentos “dataA” e “dataB” no momento do envio das informações.
+Para realizar a comunicação com o processador gráfico são utilizadas duas FIFOs (First In First Out) e um módulo gerador de pulso. O acesso as GPIOs (General-Purpose Input/Output) será feito pelo mapeamento de memória em que são associados determinados endereços de memória as entradas e saídas do sistema, assim garantindo acesso a todos os sinais e barramentos conectados a um processador de propósito geral, que permite, se fazendo uso de instruções personalizadas, realizar a distribuição dos campos das instruções do processador gráfico dentro dos barramentos “dataA” e “dataB” no momento do envio das informações.
 
 O barramento “dataA” é usado para opcodes e endereçamento do banco de registradores e memórias, enquanto que o barramento “dataB” é usado para o envio de dados a serem armazenados e/ou atualizados.
 
@@ -255,22 +251,28 @@ Com as instruções já devidamente alocadas em seus respectivos barramentos é 
 </div>
 </div>
 
+<div id="Driver uso GPU"> 
+<h2> Driver para comunicação com a GPU</h2>
+<div align="justify">
+
+
+
 </div>
 </div>
 
 <div id="Biblioteca uso GPU"> 
-<h2> Biblioteca criada para uso da GPU</h2>
+<h2> Biblioteca para uso da GPU</h2>
 <div align="justify">
 
 Nesta seção, explicaremos todas as funções implementadas em uma biblioteca escrita em linguagem C para facilitar o trabalho do programador na utilização dos artifícios disponíveis na GPU, além de realizar a comunicação com o driver nas situações de escrita e leitura de informações.
 
 <h3>Variáveis globais</h3>
 
-Quatro variáveis são utilizadas entre as funções presentes na biblioteca. São elas:
+Quatro variáveis são criadas para serem utilizadas entre as funções presentes na biblioteca. São elas:
 
 <h4><i>data_a</i> e <i>data_b</i>:</h4>
 
-Essas variáveis são números inteiros sem sinal de 32 bits que representam os dados a serem enviados para o driver para os barramentos data_a e data_b da GPU. Essas variáveis são acessíveis e editadas pelas funções da biblioteca a depender dos dados recebidos por parâmetro.
+Essas variáveis são números inteiros sem sinal de 32 bits que representam os dados a serem enviados para o driver para os barramentos "data_a" e "data_b" da GPU. Essas variáveis são acessíveis e editadas pelas funções da biblioteca a depender dos dados recebidos por parâmetro.
 
 <h4><i>fd</i>:</h4>
 
@@ -280,21 +282,21 @@ Essa variável representa um identificador único do arquivo do dispositivo de c
 
 Essa variável representa o buffer da biblioteca, onde serão guardados os dados a serem enviados ao buffer do driver. Como cada barramento (A e B) localizado na GPU suportam 32 bits cada, o maior número inteiro sem sinal que eles suportam é 2^32 - 1 = 4.294.967.295, ou seja, um número de 10 dígitos máximo.
 
-Assim, as posições 0 a 9 desse buffer, irão conter os 10 dígitos de um número inteiro sem sinal para o barramento b e as posições 10 a 19 irão conter os 10 dígitos de um número inteiro sem sinal para o barramento a. É definido o tamanho de 21 para evitar estouro de array.
+Assim, as posições 0 a 9 desse buffer, irão conter os 10 dígitos de um número inteiro sem sinal para o barramento b e as posições 10 a 19 irão conter os 10 dígitos de um número inteiro sem sinal para o barramento a. É definido o tamanho de 21 para evitar possíveis estouros de array.
 
 <h3>Funções para comunicação com o driver</h3>
 
-Três funções são utlizadas para interligar o driver à biblioteca. São elas:
+Três funções são utlizadas para interligar a biblioteca ao driver. São elas:
 
-<h4>Abertura do driver:</h4>
+<h4><b>Abertura do driver:</b></h4>
 
  A primeira delas é a <i>open_driver()</i>. Seu objetivo é abrir o dispositivo de caractere atribuído ao driver para iniciar a comunicação entre driver e biblioteca, retornando erro caso a abertura do arquivo não se concretize. 
  
- <h4>Fechar driver:</h4>
+ <h4><b>Fechar driver:</b></h4>
  
  Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>. Ela é responsável por encerrar a comunicação com o dispositivo de caractere atribuído ao driver, retornando erro caso isso não se concretize.
 
-<h4>Transferência de dados entre biblioteca e driver:</h4>
+<h4><b>Transferência de dados entre biblioteca e driver:</b></h4>
 
 Por fim, a função <i>preenche_buffer()</i> realiza a transferência dos dados do buffer da biblioteca para o buffer do driver. A função converte e transforma em caracteres char, os números inteiros sem sinal de 32 bits das variáveis globais <i>data_a</i> e <i>data_b</i>. Caso o número armazenado seja menor que 10 dígitos, a função adiciona zeros a frente do número afim de completar os 10 caracteres por barramento. Segue imagem exemplificando como ficaria o buffer após essas operações.
 
@@ -309,7 +311,7 @@ Após formatar e preencher o buffer da biblioteca com os dados a serem enviados 
 
 Funções para utilização e controle dos elementos disponibilizados pela GPU foram criadas. A seguir explicaremos cada uma delas em detalhes.
 
-<h4>Aplicação de cor ao background:</h4>
+<h4><b>Aplicação de cor ao background:</b></h4>
 
 A função <i>set_cor_background_wbr()</i>, recebe como parâmetro as cores RGB (vermelho, verde e azul) em sua representação decimal. Ela realiza verificações para tratar casos em que os valores recebidos são negativos ou maiores que 7, intervalo que é incompatível com as especificações da GPU. 
 
@@ -321,7 +323,7 @@ O <i>data_b</i> recebe os parâmetros referentes a tonalidade da cor a ser setad
 
 Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
-<h4>Exibir sprites na tela:</h4>
+<h4><b>Exibir sprites na tela:</b></h4>
 
 A função <i>set_sprite_wbr()</i> recebe como parâmetro o bit de ativação do sprite, as coordenadas x e y onde deve ser exibido o sprite em tela, o sprite a ser exibido e o registrador em que ele será armazenado, todos esses em sua representação decimal. Verificações são feitas para assegurar que o código de ativação do sprite seja igual a 0 ou 1 e que sua localização na tela respeite os limites suportados pela GPU, que vão de 0 a 639 para x e de 0 a 479 para y. 
 
@@ -335,7 +337,7 @@ O <i>data_b</i> recebe o restante dos parâmetros recebidos pela função.
 
 Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
-<h4>Editar background:</h4>
+<h4><b>Editar background:</b></h4>
 
 Para realizar a edição do background é utilizada a função <i>edit_bloco_background_wbm()</i>. Ela recebe como parâmetro as coordenadas x e y, referentes de forma respectiva a linha e coluna de um bloco do background a ser editado, além da nova cor que será alocada a este bloco, todos esses em sua representação decimal. No escopo da função, é criada uma variável que representa o bloco do background que será editado. Ela armazena o resultado do valor da coordenada y recebida (linha) multiplicado por 80 (número total de colunas), somado a coordenada x recebida (coluna). Esse cálculo resulta em um dos 4800 blocos que compõem o blackground.
 
@@ -349,7 +351,7 @@ O <i>data_b</i> recebe os parâmetros referentes a tonalidade da cor a ser setad
 
 Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
-<h4>Desabilitar background:</h4>
+<h4><b>Desabilitar background:</b></h4>
 
 Nos mesmos moldes da função anterior, podemos desabilitar um bloco especifíco do background usando a função <i>desabilita_bloco_background_wbm()</i>. Os parâmetros referentes as coordenadas e cálculo do bloco a ser desabilitado são os mesmos, entretanto, dessa vez não é preciso das cores RGB por estarmos justamente desabilitando um bloco do background, que por definição da arquitetura da GPU, passando o valor 510, os pixels da area do bloco desabilitado são ocupados com a cor base do background, um polígono ou sprite, caso suas coordenadas coincidam. 
 
@@ -363,7 +365,7 @@ O <i>data_b</i> recebe o valor especificado na arquitetura da GPU para desabilit
 
 Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
-<h4>Editar sprites:</h4>
+<h4><b>Editar sprites:</b></h4>
 
 Para realizar a edição dos sprites armazenados ou criação de novos, é utilizada a função <i>edit_sprite_wsm()</i>. Ela recebe como parâmetro um endereço que se refere ao pixel a ser editado ou criado de um sprite e as cores RGB que esse pixel vai receber, todos esses em sua representação decimal. Verificações são feitas para assegurar que o endereço represente um número presente no intervalo da memória de sprites e se o valor que representa cada cor no RGB está dentro do permitido.
 
@@ -375,7 +377,7 @@ O <i>data_b</i> recebe os parâmetros referentes a tonalidade da cor a ser setad
 
 Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
-<h4>Exibir quadrado:</h4>
+<h4><b>Exibir quadrado:</b></h4>
 
 Um dos polígonos que a GPU consegue renderizar é o quadrado. Para implementar está funcionalidade usamos a função <i>set_quadrado_dp()</i>, que recebe como parâmetro a cor de criação do quadrado a partir do RGB, o tamanho do quadrado a ser renderizado, a posição das coordenadas x e y que ele deve ocupar na tela e sua ordem de exibição na fila,  todos esses em sua representação decimal. Como mencionado anteriormente os valores para o RGB devem estar entre 0 e 7. Para o tamanho, o intervalo definido vai de 0 a 15, e em relação a coordenada x o valor deve estar entre 0 e 511 e entre 0 e 479 para coordenada y. A ordem de exibição na fila deve respeitar o número máximo de poligonos que podem ser renderizados em um frame, podendo ocupar uma posição de 0 a 15.
 
@@ -389,21 +391,22 @@ O <i>data_b</i> recebe o restante dos parâmetros recebidos pela função, além
 
 Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver.
 
-<h4>Exibir triângulo:</h4>
+<h4><b>Exibir triângulo:</b></h4>
 
 A GPU também consegue realizar a renderização de triângulos. A função criada para realizar esta funcionalidade é a <i>set_triangulo_dp()</i>, que funciona nos mesmos moldes da criação dos quadrados, recebendo os mesmos parâmetros e realizando as mesmas verificações. Entretanto, o valor pré definido referente ao tipo de polígono a ser rendereziado é alterado para 1, indicando para a GPU que um triângulo deve ser renderizado, diferente da criação do quadrado que é indicado com um 0.
 
-<h4>Limpar a tela:</h4>
+<h4><b>Limpar a tela:</b></h4>
 
 Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela atribui a cor nula ao background para apagá-lo, além de desabilitar, utilizando laços do tipo for, todos os sprites e polígonos renderizados. O loop passa por cada registrador para desativar os sprites e por cada posição na memória de instrução para desabilitar os polígonos, definindo seus tamanhos como 0. 
 
 Para apagar os blocos editados do background, dois laços aninhados percorrem de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente, desabilitando todos os 4800 blocos.
 
-<h4>Visualizando as funções</h4>
+<h4><b>Visualizando as funções</b></h4>
+
 A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definição de cada função explicada anteriormente, seus parâmetros e tipagem do retorno de cada uma delas.
 
 <p align="center">
-  <img src="Imagens/definicao_funcoes.png" width = "700" />
+  <img src="Imagens/FuncoesBiblioteca.png" width = "700" />
 </p>
 <p align="center"><strong> Definição de cada uma das funções no arquivo de cabeçalho</strong></p>
 
@@ -418,7 +421,7 @@ A seguir, a descrição dos testes realizados para garantir o adequado funcionam
 
 <h3>Driver</h3>
 
-Afim de garantir o funcionamento do carregamento e descarregamento no kernel do linux do driver desenvolvido, além de algumas outras operações, foram realizados alguns testes descritos a seguir.
+Afim de garantir o correto carregamento e descarregamento no kernel do linux do driver desenvolvido, além de algumas outras operações, foram realizados alguns testes descritos a seguir.
 
 * Inicializando o módulo kernel.
 

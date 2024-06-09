@@ -33,6 +33,7 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
         <li><a href="#arq_CPU">  Arquitetura da placa DE1-SoC</a></li>
         <li><a href="#Perifericos-utilizados"> Periféricos da Placa DE1-SoC Utilizados </a></li>
         <li><a href="#Arquitetura GPU"> Arquitetura da GPU utilizada </a></li>
+	<li><a href="#Biblioteca uso GPU"> Biblioteca criada para uso da GPU </a></li>
         <li><a href="#testes"> Testes Realizados </a></li>
         <li><a href="#conclusao"> Conclusão </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
@@ -160,6 +161,78 @@ Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas espe
 </div>
 </div>
 
+</div>
+</div>
+
+<div id="Biblioteca uso GPU"> 
+<h2> Biblioteca criada para uso da GPU</h2>
+<div align="justify">
+
+Nesta seção, explicaremos todas as funções implementadas em uma biblioteca escrita em linguagem c para facilitar o trabalho do programador na utilização dos artifícios disponíveis na GPU, além de realizar a comunicação com o driver nas situações de escrita e leitura de informações.
+
+<h3>Funções para comunicação com o driver</h3>
+
+Três funções são utlizadas para interligar o driver a biblioteca,são elas:
+
+<h4>Abertura do driver:</h4>
+
+ A primeira delas é a <i>open_driver()</i>, seu objetivo é abrir o arquivo referente ao driver para iniciar a comunicação entre driver e biblioteca, retornando erro caso a abertura do arquivo não se concretize. 
+ 
+ <h4>Fechar driver:</h4>
+ 
+ Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>, que encerra a comunicação com o arquuivo referente ao driver retornando erro caso isso não se concretize.
+
+<h4>Transferência de dados entre biblioteca e driver:</h4>
+
+Por fim, a função <i>preenche_buffer()</i> realiza a transferência do buffer contendo as informações dos barramentos <i>data_a</i> e <i>data_b</i> para o driver. São 20 caracteres ao todo, sendo os 10 primeiros referentes ao barramento b e os 10 últimos referentes ao barramento a, os dados são recebidos em decimal e a função é também responsável por converter estes dados em char.
+
+<h3>Funções para utilização da GPU</h3>
+
+Funções para que utilizam os elementos disponibilizados pela GPU forma criadas para facilitar a utilização destes elementos por parte dos progrmadores, a seguir explicaremos cada uma delas em detalhes
+
+<h4>Aplicação de cor ao background:</h4>
+
+A função <i>set_cor_background_wbr()</i>, recebe como parâmetro as cores RGB (vermelho, verde e azul) em sua representação decimal, ela realiza verificações para tratar casos em que o valor recebido é negativo ou maior que 7, intervalo que é incompatível com as especificações da GPU. 
+
+Em caso de valor recebido dentro do intervalo correto (entre 0 e 7) os valores informados serão convertidos em char para serem alocados nos barramentos de instrução <i>data_a</i> e <i>data_b</i> para enfim serem enviados ao driver através da função <i>preenche_buffer()</i>.
+
+<h4>Exibir sprites na tela:</h4>
+
+A função <i>set_sprite_wbr()</i> recebe como parâmetros o bit de ativação do sprite, as coordenadas x e y onde deve estar localizado o sprite, o sprite a ser exibido e o registrador em que le será armazenado. Verificações são feitas para assegurar que o código de ativação do sprite seja igual a 1 e que sua localização na tela respeite os limites pré definidos, que vão de 0 a 679 para x e de 0 a 479 para y. 
+
+É verificado também se o valor que representa o sprite escolhido e o registrador que armazenará ele está dentro do intervalo de 0 a 31, quantidade total de sprites e registradores disponíveis. Por fim, os dados recebidos são atribuidos aos barramentos a e b para enfim serem enviados ao buffer pela função <i>preenche_buffer()</i>.
+
+<h4>Editar background:</h4>
+
+Para realizar a edição do background é utilizada a função <i>edit_bloco_background_wbm()</i>, ela recebe como parâmetros as coordenadas x e y referentes de forma respectiva a linha e coluna onde serão feitas as edições, a nova cor que será alocada e o bloco total de background que será editado, chegamos a este valor total do bloco multiplicando o valor informado em y por 80 (número total de linhas) e somando a x (numero de colunas). 
+
+É verificado se o valor  em bloco está dentro do limite permitido de blocos editáveis na tela, que vai de 0 a 4799 e se o valor que representa cada cor no RGB está dentro do permitido que vai de 0 a 7. Caso as verificações passem os valores são atribuídos aos barramentos para enfim serem levados ao driver por <i>preenche_buffer()</i>.
+
+<h4>Desabilitar background:</h4>
+
+Nos mesmos moldes da função anterior, podemos desabilitar um bloco especifíco do background usando a função <i>desabilita_bloco_background_wbm()</i>, os parâmetros referentes as coordenadas e cálculo do bloco total a ser desabilitado é o mesmo, entretanto, dessa vez não precisamos das cores por estarmos jsutamento apagando o background. As mesmas verificações para o tamanho do bloco e intervalo de valor das coordenadas são usadas, a alocação nos barramentos e escrita no driver é feita da igualmente usando <i>preenche_buffer()</i>.
+
+<h4>Editar sprites:</h4>
+
+
+<h4>Exibir quadrado:</h4>
+
+Um dos polígonos que a GPU consegue renderizar é o quadrado, para implementar está funcionalidade usamos a função <i>set_quadrado_dp()</i>, ela recebe como parâmetros a cor de criação do quadrado a partir do RGB, o tamanho do quadrado a ser renderizado, a posição que ele deve ocupar na tela e sua ordem de exibição na fila. Como mencionado anteriormente os valores para o RGB devem estar eentre 0 e 7, para o tamanho o intervalo definido vai de 0 a 15, com relação a coordenada x o valor deve estar entre 0 e 511 e entre 0 e 479 para y. 
+
+A ordem de exibição na fila deve respeitar o número máximo de poligonos que podem ser renderizados, podendo ocupar uma posição de 0 a 15. Em caso de sucesso ao passar pelas verificações os barramentos recebem as informações que são enviadas oa driver por <i>preenche_buffer()</i>.
+
+<h4>Exibir triângulo:</h4>
+
+A GPU também consegue realizar a renderização de triângulos, a função criada para realizar esta funcionalidade é a <i>set_triangulo_dp()</i> que funciona nos mesmos moldes da criação dos quadrados, recebendo os mesmos parâmetros e realizando as mesmas verificações, entretanto, o primeiro bit atribuido ao barramento b é colocado igual a 1, indicando para a GPU que um triângulo deve ser renderizado, diferente da criação do quadrado que é indicado com um 0.
+
+<h4>Limpar a tela:</h4>
+Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela zera os atributos do background para apaga-lo, além de remover utilizando laços do tipo for em todos os itens renderizados. 
+
+Para apagar os blocos editados do background, dois laços aninhados percorrem de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente. Na remoção dos sprites e poligonos os laços funcionam chamando as respectivas funções responsáveis por cada item criado, todos os parâmetros de envio são zerados, a iteração passa por cada registrador para limpar os sprites e por cada posição na fila para desabilitar os polígonos.
+
+</div>
+</div>
+
 <div id="testes"> 
 <h2> Testes </h2>
 <div align="justify">
@@ -271,6 +344,17 @@ Também foram realizados testes para verificar a função de remover da tela tod
   <img src="Imagens/ErroSetQuadrado.png" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
+
+</div>
+</div>
+
+<div id="conclusao"> 
+<h2> Conclusão</h2>
+<div align="justify">
+
+O desenvolvimento de uma forma de comunicação entre a GPU implementada em uma plataforma FPGA e o HPS foi alcançado de forma satisfatória.
+
+A criação de um driver em linguagem C que atuasse no recebimento de informações do espaço de usuário a partir de uma biblioteca que facilite o trabalho do programador na utilização das funções disponibilizadas pela GPU foi alcançada, e o projeto final com a construção de uma imagem utilizando os elementos disponíveis na GPU através da biblioteca criada foi realizado.
 
 </div>
 </div>

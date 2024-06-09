@@ -160,6 +160,119 @@ Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas espe
 </div>
 </div>
 
+<div id="testes"> 
+<h2> Testes </h2>
+<div align="justify">
+
+A seguir, a descrição dos testes realizados para garantir o adequado funcionamento do driver e biblioteca.
+
+<h3>Driver</h3>
+
+Afim de garantir o funcionamento do carregamento e descarregamento no kernel do linux do driver desenvolvido, além de algumas outras operações, foram realizados alguns testes descritos a seguir.
+
+* Inicializando o módulo kernel.
+
+<p align="center">
+  <img src="Gifs/CarregaDriver.gif" width = "400" />
+</p>
+<p align="center"><strong>Carregando o módulo kernel no Linux</strong></p>
+
+* Removendo o módulo kernel.
+
+<p align="center">
+  <img src="Gifs/DescarregaDriver.gif" width = "400" />
+</p>
+<p align="center"><strong>Descarregando o módulo kernel no Linux</strong></p>
+
+* Abrindo comunicação com o dispositivo de caractere.
+
+<p align="center">
+  <img src="Gifs/AbreDispositivo.gif" width = "400" />
+</p>
+<p align="center"><strong>Abre arquivo especial</strong></p>
+
+* Fechando comunicação com o dispositivo de caractere.
+
+<p align="center">
+  <img src="Gifs/FechaDispositivo.gif" width = "400" />
+</p>
+<p align="center"><strong>Fecha arquivo especial</strong></p>
+
+* Lendo dados do módulo kernel.
+
+<p align="center">
+  <img src="Gifs/LeDriver.gif" width = "400" />
+</p>
+<p align="center"><strong>Lê buffer do driver</strong></p>
+
+<h3>Biblioteca + Driver</h3>
+
+Para teste das funções da biblioteca projetada em C, além de verificar sua correta comunicação com o módulo kernel carregado, foi desenvolvimento um código para gerar uma imagem utilizando os elementos fornecidos pela GPU de Gabriel Sá Barreto Alves. Os elementos utilizados e as funções necessárias para conclusão da imagem final serão descritos a seguir.
+
+<p align="center">
+  <img src="Imagens/ImagemFinal.jpeg" width = "600" />
+</p>
+<p align="center"><strong>Imagem Final</strong></p>
+
+* Céu (azul claro) -> <i>set_cor_background_wbr</i> 1x
+
+* Sol (amarelo) -> <i>set_quadrado_dp</i> e <i>set_triangulo_dp</i> 1x cada
+
+* Nuvens (branco) -> <i>edit_bloco_background_wbm</i> 31x
+
+* Gramas (verde) -> <i>edit_bloco_background_wbm</i> 16x
+
+* Troncos 1 e 2 (azulado) -> <i>set_sprite_wbr</i> 2x
+
+* Árvores 1 e 2 (vermelha) -> <i>set_sprite_wbr</i> 2x
+
+* Aliens 1 e 2 (branco e vermelho) -> <i>set_sprite_wbr</i> 2x
+
+* Maçaneta (barra azul) -> <i>set_sprite_wbr</i> 1x
+
+* Teto da casa (marrom) -> <i>set_triangulo_dp</i> 6x
+
+* Porta da casa (marrom) -> <i>set_quadrado_dp</i> 2x
+
+* Janelas da casa (marrom) -> <i>set_quadrado_dp</i> 2x
+
+* Estrutura da casa (branco) -> <i>set_quadrado_dp</i> 1x
+
+<h3>Outros testes</h3>
+
+Também foram realizados testes para verificar a função de remover da tela todos elementos utilizados e as verificações de erros de dados recebidos por parâmetro nas funções. Para os erros, foram testadas as funções <i>set_cor_background_wbr</i>, <i>set_sprite_wbr</i> e <i>set_quadrado_dp</i>.
+
+* Limpando a tela.
+
+<p align="center">
+  <img src="Gifs/LimpaTela.gif" width = "400" />
+</p>
+<p align="center"><strong>Remove da tela elementos utilizados</strong></p>
+
+* Passando dados inválidos para <i>set_cor_background_wbr</i>.
+
+<p align="center">
+  <img src="Imagens/ErroSetCorBackground.png" width = "400" />
+</p>
+<p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
+
+* Passando dados inválidos para <i>set_sprite_wbr</i>.
+
+<p align="center">
+  <img src="Imagens/ErroSetSprite.png" width = "400" />
+</p>
+<p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
+
+* Passando dados inválidos para <i>set_quadrado_dp</i>.
+
+<p align="center">
+  <img src="Imagens/ErroSetQuadrado.png" width = "400" />
+</p>
+<p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
+
+</div>
+</div>
+
 <div id="execucaoProjeto"> 
 <h2> Execução do Projeto  </h2>
 <div align="justify">

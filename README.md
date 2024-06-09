@@ -158,8 +158,91 @@ A placa é equipada com uma porta de saída de vídeo com um controlador VGA, qu
 
 Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas especificações e detalhes de funcionamento.
 
-</div>
-</div>
+<h3>Introdução</h3>
+
+GPU é uma sigla para Graphics Processing Unit, ou uma unidade de processamento gráfico, que nada mais é do que um circuito eletrônico capaz de realizar cálculos matemáticos em alta velocidade, se destacando em relação à CPU devido a sua eficiência em operações que demandam um alto nível de paralelismo.
+
+Para tarefas que exigem a execução de diferentes funções de forma independente, é comum de se fracionar a carga de trabalho em pequenas execuções que, no caso de uma GPU, podem ser alocados a cada um de seus núcleos.
+
+Em aplicações gráficas como jogos, seu uso é comumente associado ao gerenciamento do processo de renderização e, se utilizando de um conjunto de instruções previamente definidas, mover e controlar elementos gráficos (tal como polígonos e sprites) e o layout do background da tela.
+
+A GPU usada neste projeto possui capacidade de renderizar uma tela de 640 x 480 pixels que será projetada em monitor com o padrão VGA possuindo frequência de 60 quadros por segundo (*QPS* ou *FPS*), podendo projetar nessa tela, além de uma cor de fundo, 2 tipos de polígonos convexos (quadrado e triângulo) ou um conjunto predefinido de sprites (já previamente alocados em memória física).
+
+<h3>Módulos internos</h3>
+
+A GPU possui um conjunto de módulos internos, cada um resposável por uma função específica, sendo necessário o funcionamento conjunto de cada uma dessas estruturas para a geração de um novo quadro (ou *Frame*).
+
+Os módulos presentes nessa GPU, além do decodificador de instrução (cuja função é autoexplicativa) são os seguintes:
+
+<p align="center">
+  <img src="Imagens/modulos_GPU.png" width = "600" />
+</p>
+<p align="center"><strong> Diagrama com os módulos da GPU</strong></p>
+
+1. Unidade de Controle: uma máquina de estados que controla o processo de leitura, decodificação e execução das instruções recebidas.
+
+1. Banco de Registradores: armazena temporariamente as informações (coordenadas, offset de memória, e um bit de ativação) associadas a cada elemento, 32 ao total, 1 para background e 31 para sprites.
+
+1. Módulo de Desenho: reponsável por gerenciar o processo de desenho dos pixels no monitor VGA.
+
+1. Controlador VGA: responsável por gerar os sinais de sincronização (v sync e h sync) da VGA, além de fornecer as coordenadas x e y do processo de varredura do monitor.
+
+1. Memória de Sprites: armazena o bitmap para cada sprite. (12.800 palavras de 9-bits, 3 bits para cada componente RGB). Cada sprite possui tamanho de 20x20 pixels, ocupando de forma unitária 400 posições de memória.
+
+1. Memória de Background: funcionamento similar a memória de sprites, porém utilizada para modificar pequenas partes do background. Consiste em 4.800 palavras de 9-bits
+
+1. Co-Processador: resposável por gerenciar aconstrução de polígonos convexos do tipo Quadrado e Triângulo (unidades de cálculo são responsáveis por executar as etapas de definição e análise de colinearidade dos polígonos em relação aos pixels da tela.).
+
+1. Gerador RGB: escolhe a cor que será gerada no pixel em caso de haver 2, ou mais, estruturas naquela mesma região (prioridade: sprite → polígono → background)
+
+<h3>Comandos e funções</h3>
+
+<h4>Escrita no Banco de Registradores (WBR):</h4> 
+
+Essa instrução é responsável por configurar os registradores que armazenam as informações dos sprites e a cor base do background. O *opcode* dessa função é 0000.
+A primeira forma dessa instrução se dá quando queremos mudar a cor de background, e usa um *opcode* (4 bits) para identificar a operação, o registrador (5 bits, para representar 32 possíveis registradores) que irá guardar a informação da cor do background e em seguida a sequência que indica a cor do background em em RGB (9 bits, 3 para codificar cada cor RGB).
+
+<p align="center">
+  <img src="Imagens/instrucao_WBR.png" width = "600" />
+</p>
+<p align="center"><strong> Formato instrução WBR (1)</strong></p>
+
+A segunda forma da instrução se dá quando queremos manipular algum sprite, continua usando um *opcode*, e um campo de registrador, mas em seguida é passado um *offset* (9 bits) que dará o endereço de memória do sprite a ser configurado, em seguida temos as coordenadas em que o sprite será posto em X e Y (10 bits para cada um, para poder representar as 640 posições verticais), e por fim um bit *sp*, para habilitar/desabilitar o desenho do sprite na tela.
+
+<p align="center">
+  <img src="Imagens/instrucao_WBR2.png" width = "600" />
+</p>
+<p align="center"><strong> Formato instrução WBR (2)</strong></p>
+
+
+<h4>Escrita na Memória de Sprites (WSM):</h4> 
+
+Essa instrução armazena ou modifica o conteúdo presente na Memória de Sprites. O *opcode* dessa função é 0001.
+Essa instrução, além do *opcode* (4 bits), possui um campo para inserção do endereço de memória (16 bits, para representar todos so endereços da memória de sprites) seguido por outro campo para os novos valores de cor (9 bits, 3 para cada cor RGB).
+
+<p align="center">
+  <img src="Imagens/instrucao_WSM.png" width = "600" />
+</p>
+<p align="center"><strong> Formato instrução WSM</strong></p>
+
+
+<h4>Escrita na Memória de Background (WBM):</h4> Essa instrução armazena ou modifica o conteúdo presente na Memória de Background. Sua função é configurar valores RGB para o preenchimento de áreas do background. O *opcode* dessa função é 0010.
+Similar a WSM, contudo o endereço de memória conta apenas com 12 bits, devido ao tamanho reduzido da memória de background em comparação a memória de sprites.
+
+<h4>Definição de um Polígono (DP):</h4> 
+
+Essa instrução é utilizada para modificar o conteúdo da Memória de Instrução do Co-Processador, de forma a definir os dados referentes a um polígono que deve ser renderizado. O *opcode* dessa função é 0011.
+O campo endereço indica a posição de memória em que a instrução será armazenada (4 bits), em seguida são passadas as coordenadas do ponto de referência para o polígono (9 bits cada), em seguida pelo tamanho do polígono (4 bits, ver a tabela), com a cor do polígono em RGB (9 bits, 3 para cada cor) e o bit de forma que indica se tratar de um quadrado (0), ou triângulo (1).
+
+<p align="center">
+  <img src="Imagens/instrucao_DP.png" width = "600" />
+</p>
+<p align="center"><strong> Formato instrução DP (2)</strong></p>
+
+<p align="center">
+  <img src="Imagens/tamanho_poligono.png" width = "300" />
+</p>
+<p align="center"><strong> Relação numérica do tamanho do polígono</strong></p>
 
 </div>
 </div>

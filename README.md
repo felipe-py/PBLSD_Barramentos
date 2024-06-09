@@ -238,6 +238,8 @@ Para teste das funções da biblioteca projetada em C, além de verificar sua co
 
 * Estrutura da casa (branco) -> <i>set_quadrado_dp</i> 1x
 
+Com o resultado da imagem final, foi possível comprovar a integridade dos dados recebidos e processados pelas funções da biblioteca, além da correta comunicação biblioteca + driver.
+
 <h3>Outros testes</h3>
 
 Também foram realizados testes para verificar a função de remover da tela todos elementos utilizados e as verificações de erros de dados recebidos por parâmetro nas funções. Para os erros, foram testadas as funções <i>set_cor_background_wbr</i>, <i>set_sprite_wbr</i> e <i>set_quadrado_dp</i>.

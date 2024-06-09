@@ -60,7 +60,7 @@ set_cor_background_wbr(int azul, int verde, int vermelho) {
     }
     
     /* Atribui valores decimais para serem convertidos em char para o buffer */
-    data_a = 0b0;
+    data_a = 0b0000;
     data_b = (azul << 6) | (verde << 3) | vermelho;
 
     /* Tenta enviar dados para o Driver */
@@ -115,7 +115,9 @@ set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registr
  */
 int 
 edit_bloco_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho) {
-    int bloco = bloco_y * 80 + bloco_x;
+    int bloco;
+
+    bloco = bloco_y * 80 + bloco_x;     /* Multiplica linha recebida pelo total de colunas (80) e soma à coluna recebida */
     
     /* Verificações de dados recebidos */
     if (bloco > 4799 || azul > 7 || verde > 7 || vermelho > 7) {
@@ -147,7 +149,9 @@ edit_bloco_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int ver
  */
 int 
 desabilita_bloco_background_wbm(int bloco_x, int bloco_y) {
-    int bloco = bloco_y * 80 + bloco_x;
+    int bloco;
+
+    bloco = bloco_y * 80 + bloco_x;     /* Multiplica linha recebida pelo total de colunas (80) e soma à coluna recebida */
     
     /* Verificações de dados recebidos */
     if (bloco > 4799) {
@@ -210,12 +214,16 @@ edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
  *                  ref_x: coordenada X do ponto de referência do polígono (0 ao 511)
  *                  ref_y: coordenada Y do ponto de referência do polígono (0 ao 479)
  *                  ordem_impressao: ordem para sobreescrever polígonos (0 ao 15)
+ *                  limite: variável usada para verificar se ref_x e ref_y não ultrapassam 
+ *                          limite da tela a depender do tamanho do polígono 
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
  */
 int 
 set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) { 
-    /* Verifica se coordenadas x e y estão dentro do limite permitido a depender do tamanho escolhido */
-    size_t limite = 5 * (tamanho - 1) + 9;
+    size_t limite;
+
+    /* Verifica se coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido */
+    limite = 5 * (tamanho - 1) + 9;
     
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 479 || ordem_impressao > 15) {
@@ -250,12 +258,16 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
  *                  ref_x: coordenada X do ponto de referência do polígono (0 ao 511)
  *                  ref_y: coordenada Y do ponto de referência do polígono (0 ao 479)
  *                  ordem_impressao: ordem para sobreescrever polígonos (0 ao 15)
+ *                  limite: variável usada para verificar se ref_x e ref_y não ultrapassam 
+ *                          limite da tela a depender do tamanho do polígono 
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
  */
 int 
 set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
-    /* Verifica se coordenadas x e y estão dentro do limite permitido a depender do tamanho escolhido */
-    size_t limite = 5 * (tamanho - 1) + 9;
+    size_t limite;
+
+    /* Verifica se coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido */
+    limite = 5 * (tamanho - 1) + 9;
 
     /* Verificações de dados recebidos */
     if (azul > 7 || verde > 7 || vermelho > 7 || tamanho > 15 || ref_x > 511 || ref_y > 480 || ordem_impressao > 15) {
@@ -326,17 +338,20 @@ limpar_tela() {
 }
 
 /**Função para transformar inteiro em char ( buffer_user = data_b + data_a ) e enviar buffer para o driver
+ *                  erro: variável usada para retorno da operação de escrita no driver
  * retorno ->       0 caso seja bem sucedido ou n bytes caso ocorra algum erro
  */
 ssize_t 
 preenche_buffer() {
+    ssize_t erro;
+
     sprintf(buffer_user, "%010" PRIu32, data_b);                        /* Formata o primeiro número para ocupar 10 caracteres iniciais do buffer */
     
     sprintf(buffer_user + 10, "%010" PRIu32, data_a);                   /* Formata o segundo número para ocupar 10 caracteres finais do buffer */
 
     lseek(fd, 0, SEEK_SET);                                             /* Lê arquivo do início */
 
-    ssize_t erro = write(fd, buffer_user, sizeof(buffer_user));         /* Verifica se escreveu no driver */
+    erro = write(fd, buffer_user, sizeof(buffer_user));                 /* Verifica se escreveu no driver */
 
     return erro;
 }

@@ -252,6 +252,8 @@ O barramento “dataA” é usado para opcodes e endereçamento do banco de regi
 
 Com as instruções já devidamente alocadas em seus respectivos barramentos é necessário que o módulo gerador de pulso dê o sinal para permitir a escrita dessas informações nas FIFOs (uma para cada barramento) em um único pulso de clock que imediatamente após o envio da informação irá interromper esse sinal. Esse funcionamento que garante que a informação não será escrita múltiplas vezes enquanto o sistema esteja recebendo energia.
 
+</div>
+</div>
 
 </div>
 </div>
@@ -260,67 +262,142 @@ Com as instruções já devidamente alocadas em seus respectivos barramentos é 
 <h2> Biblioteca criada para uso da GPU</h2>
 <div align="justify">
 
-Nesta seção, explicaremos todas as funções implementadas em uma biblioteca escrita em linguagem c para facilitar o trabalho do programador na utilização dos artifícios disponíveis na GPU, além de realizar a comunicação com o driver nas situações de escrita e leitura de informações.
+Nesta seção, explicaremos todas as funções implementadas em uma biblioteca escrita em linguagem C para facilitar o trabalho do programador na utilização dos artifícios disponíveis na GPU, além de realizar a comunicação com o driver nas situações de escrita e leitura de informações.
+
+<h3>Variáveis globais</h3>
+
+Quatro variáveis são utilizadas entre as funções presentes na biblioteca. São elas:
+
+<h4><i>data_a</i> e <i>data_b</i>:</h4>
+
+Essas variáveis são números inteiros sem sinal de 32 bits que representam os dados a serem enviados para o driver para os barramentos data_a e data_b da GPU. Essas variáveis são acessíveis e editadas pelas funções da biblioteca a depender dos dados recebidos por parâmetro.
+
+<h4><i>fd</i>:</h4>
+
+Essa variável representa um identificador único do arquivo do dispositivo de caractere do driver.
+
+<h4><i>buffer_user</i>:</h4>
+
+Essa variável representa o buffer da biblioteca, onde serão guardados os dados a serem enviados ao buffer do driver. Como cada barramento (A e B) localizado na GPU suportam 32 bits cada, o maior número inteiro sem sinal que eles suportam é 2^32 - 1 = 4.294.967.295, ou seja, um número de 10 dígitos máximo.
+
+Assim, as posições 0 a 9 desse buffer, irão conter os 10 dígitos de um número inteiro sem sinal para o barramento b e as posições 10 a 19 irão conter os 10 dígitos de um número inteiro sem sinal para o barramento a. É definido o tamanho de 21 para evitar estouro de array.
 
 <h3>Funções para comunicação com o driver</h3>
 
-Três funções são utlizadas para interligar o driver a biblioteca,são elas:
+Três funções são utlizadas para interligar o driver à biblioteca. São elas:
 
 <h4>Abertura do driver:</h4>
 
- A primeira delas é a <i>open_driver()</i>, seu objetivo é abrir o arquivo referente ao driver para iniciar a comunicação entre driver e biblioteca, retornando erro caso a abertura do arquivo não se concretize. 
+ A primeira delas é a <i>open_driver()</i>. Seu objetivo é abrir o dispositivo de caractere atribuído ao driver para iniciar a comunicação entre driver e biblioteca, retornando erro caso a abertura do arquivo não se concretize. 
  
  <h4>Fechar driver:</h4>
  
- Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>, que encerra a comunicação com o arquuivo referente ao driver retornando erro caso isso não se concretize.
+ Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>. Ela é responsável por encerrar a comunicação com o dispositivo de caractere atribuído ao driver, retornando erro caso isso não se concretize.
 
 <h4>Transferência de dados entre biblioteca e driver:</h4>
 
-Por fim, a função <i>preenche_buffer()</i> realiza a transferência do buffer contendo as informações dos barramentos <i>data_a</i> e <i>data_b</i> para o driver. São 20 caracteres ao todo, sendo os 10 primeiros referentes ao barramento b e os 10 últimos referentes ao barramento a, os dados são recebidos em decimal e a função é também responsável por converter estes dados em char.
+Por fim, a função <i>preenche_buffer()</i> realiza a transferência dos dados do buffer da biblioteca para o buffer do driver. A função converte e transforma em caracteres char, os números inteiros sem sinal de 32 bits das variáveis globais <i>data_a</i> e <i>data_b</i>. Caso o número armazenado seja menor que 10 dígitos, a função adiciona zeros a frente do número afim de completar os 10 caracteres por barramento. Segue imagem exemplificando como ficaria o buffer após essas operações.
+
+<p align="center">
+  <img src="Imagens/ExemploBufferFormatado.png" width = "400" />
+</p>
+<p align="center"><strong> Exemplo do buffer após formatações</strong></p>
+
+Após formatar e preencher o buffer da biblioteca com os dados a serem enviados para o driver, é chamada a função <i>write</i> que envia o descritor do dispositivo de caractere, o buffer da biblioteca e seu tamanho em bytes, retornando um valor diferente de 0, caso isso não se concretize.
 
 <h3>Funções para utilização da GPU</h3>
 
-Funções para que utilizam os elementos disponibilizados pela GPU forma criadas para facilitar a utilização destes elementos por parte dos progrmadores, a seguir explicaremos cada uma delas em detalhes
+Funções para utilização e controle dos elementos disponibilizados pela GPU foram criadas. A seguir explicaremos cada uma delas em detalhes.
 
 <h4>Aplicação de cor ao background:</h4>
 
-A função <i>set_cor_background_wbr()</i>, recebe como parâmetro as cores RGB (vermelho, verde e azul) em sua representação decimal, ela realiza verificações para tratar casos em que o valor recebido é negativo ou maior que 7, intervalo que é incompatível com as especificações da GPU. 
+A função <i>set_cor_background_wbr()</i>, recebe como parâmetro as cores RGB (vermelho, verde e azul) em sua representação decimal. Ela realiza verificações para tratar casos em que os valores recebidos são negativos ou maiores que 7, intervalo que é incompatível com as especificações da GPU. 
 
-Em caso de valor recebido dentro do intervalo correto (entre 0 e 7) os valores informados serão convertidos em char para serem alocados nos barramentos de instrução <i>data_a</i> e <i>data_b</i> para enfim serem enviados ao driver através da função <i>preenche_buffer()</i>.
+No caso de valores recebidos dentro do intervalo permitido (entre 0 e 7), os valores informados serão convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+
+O <i>data_a</i> recebe o valor 0, referente ao registrador e o opcode utilizado na GPU para esta instrução.
+
+O <i>data_b</i> recebe os parâmetros referentes a tonalidade da cor a ser setada no background.
+
+Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
 <h4>Exibir sprites na tela:</h4>
 
-A função <i>set_sprite_wbr()</i> recebe como parâmetros o bit de ativação do sprite, as coordenadas x e y onde deve estar localizado o sprite, o sprite a ser exibido e o registrador em que le será armazenado. Verificações são feitas para assegurar que o código de ativação do sprite seja igual a 1 e que sua localização na tela respeite os limites pré definidos, que vão de 0 a 679 para x e de 0 a 479 para y. 
+A função <i>set_sprite_wbr()</i> recebe como parâmetro o bit de ativação do sprite, as coordenadas x e y onde deve ser exibido o sprite em tela, o sprite a ser exibido e o registrador em que ele será armazenado, todos esses em sua representação decimal. Verificações são feitas para assegurar que o código de ativação do sprite seja igual a 0 ou 1 e que sua localização na tela respeite os limites suportados pela GPU, que vão de 0 a 639 para x e de 0 a 479 para y. 
 
-É verificado também se o valor que representa o sprite escolhido e o registrador que armazenará ele está dentro do intervalo de 0 a 31, quantidade total de sprites e registradores disponíveis. Por fim, os dados recebidos são atribuidos aos barramentos a e b para enfim serem enviados ao buffer pela função <i>preenche_buffer()</i>.
+É verificado também se o valor que representa o sprite escolhido e o registrador que armazenará ele está dentro do intervalo de 1 a 31 e 0 a 31, respectivamente, representando a quantidade total de sprites e registradores disponíveis para armazenamento.
+
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+
+O <i>data_a</i> recebe o parâmetro referente ao registrador para armazenar o sprite e o opcode utilizado na GPU para esta instrução.
+
+O <i>data_b</i> recebe o restante dos parâmetros recebidos pela função.
+
+Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
 <h4>Editar background:</h4>
 
-Para realizar a edição do background é utilizada a função <i>edit_bloco_background_wbm()</i>, ela recebe como parâmetros as coordenadas x e y referentes de forma respectiva a linha e coluna onde serão feitas as edições, a nova cor que será alocada e o bloco total de background que será editado, chegamos a este valor total do bloco multiplicando o valor informado em y por 80 (número total de linhas) e somando a x (numero de colunas). 
+Para realizar a edição do background é utilizada a função <i>edit_bloco_background_wbm()</i>. Ela recebe como parâmetro as coordenadas x e y, referentes de forma respectiva a linha e coluna de um bloco do background a ser editado, além da nova cor que será alocada a este bloco, todos esses em sua representação decimal. No escopo da função, é criada uma variável que representa o bloco do background que será editado. Ela armazena o resultado do valor da coordenada y recebida (linha) multiplicado por 80 (número total de colunas), somado a coordenada x recebida (coluna). Esse cálculo resulta em um dos 4800 blocos que compõem o blackground.
 
-É verificado se o valor  em bloco está dentro do limite permitido de blocos editáveis na tela, que vai de 0 a 4799 e se o valor que representa cada cor no RGB está dentro do permitido que vai de 0 a 7. Caso as verificações passem os valores são atribuídos aos barramentos para enfim serem levados ao driver por <i>preenche_buffer()</i>.
+É verificado se o valor da variável está dentro do limite permitido de blocos editáveis do background, que vai de 0 a 4799, e se o valor que representa cada cor no RGB está dentro do permitido que vai de 0 a 7.
+
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+
+O <i>data_a</i> recebe a variável que indica um dos blocos a ser editado e o opcode utilizado na GPU para esta instrução.
+
+O <i>data_b</i> recebe os parâmetros referentes a tonalidade da cor a ser setada no bloco do background.
+
+Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
 <h4>Desabilitar background:</h4>
 
-Nos mesmos moldes da função anterior, podemos desabilitar um bloco especifíco do background usando a função <i>desabilita_bloco_background_wbm()</i>, os parâmetros referentes as coordenadas e cálculo do bloco total a ser desabilitado é o mesmo, entretanto, dessa vez não precisamos das cores por estarmos jsutamento apagando o background. As mesmas verificações para o tamanho do bloco e intervalo de valor das coordenadas são usadas, a alocação nos barramentos e escrita no driver é feita da igualmente usando <i>preenche_buffer()</i>.
+Nos mesmos moldes da função anterior, podemos desabilitar um bloco especifíco do background usando a função <i>desabilita_bloco_background_wbm()</i>. Os parâmetros referentes as coordenadas e cálculo do bloco a ser desabilitado são os mesmos, entretanto, dessa vez não é preciso das cores RGB por estarmos justamente desabilitando um bloco do background, que por definição da arquitetura da GPU, passando o valor 510, os pixels da area do bloco desabilitado são ocupados com a cor base do background, um polígono ou sprite, caso suas coordenadas coincidam. 
+
+As mesmas verificações para limite permitido de blocos editáveis do background são usadas.
+
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+
+O <i>data_a</i> recebe a variável que indica um dos blocos a ser desabilitado e o opcode utilizado na GPU para esta instrução.
+
+O <i>data_b</i> recebe o valor especificado na arquitetura da GPU para desabilitar um bloco do background.
+
+Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
 <h4>Editar sprites:</h4>
 
+Para realizar a edição dos sprites armazenados ou criação de novos, é utilizada a função <i>edit_sprite_wsm()</i>. Ela recebe como parâmetro um endereço que se refere ao pixel a ser editado ou criado de um sprite e as cores RGB que esse pixel vai receber, todos esses em sua representação decimal. Verificações são feitas para assegurar que o endereço represente um número presente no intervalo da memória de sprites e se o valor que representa cada cor no RGB está dentro do permitido.
+
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+
+O <i>data_a</i> recebe o parâmetro referente ao endereço para editar ou criar um pixel de um sprite e o opcode utilizado na GPU para esta instrução.
+
+O <i>data_b</i> recebe os parâmetros referentes a tonalidade da cor a ser setada no pixel do sprite.
+
+Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
 
 <h4>Exibir quadrado:</h4>
 
-Um dos polígonos que a GPU consegue renderizar é o quadrado, para implementar está funcionalidade usamos a função <i>set_quadrado_dp()</i>, ela recebe como parâmetros a cor de criação do quadrado a partir do RGB, o tamanho do quadrado a ser renderizado, a posição que ele deve ocupar na tela e sua ordem de exibição na fila. Como mencionado anteriormente os valores para o RGB devem estar eentre 0 e 7, para o tamanho o intervalo definido vai de 0 a 15, com relação a coordenada x o valor deve estar entre 0 e 511 e entre 0 e 479 para y. 
+Um dos polígonos que a GPU consegue renderizar é o quadrado. Para implementar está funcionalidade usamos a função <i>set_quadrado_dp()</i>, que recebe como parâmetro a cor de criação do quadrado a partir do RGB, o tamanho do quadrado a ser renderizado, a posição das coordenadas x e y que ele deve ocupar na tela e sua ordem de exibição na fila,  todos esses em sua representação decimal. Como mencionado anteriormente os valores para o RGB devem estar entre 0 e 7. Para o tamanho, o intervalo definido vai de 0 a 15, e em relação a coordenada x o valor deve estar entre 0 e 511 e entre 0 e 479 para coordenada y. A ordem de exibição na fila deve respeitar o número máximo de poligonos que podem ser renderizados em um frame, podendo ocupar uma posição de 0 a 15.
 
-A ordem de exibição na fila deve respeitar o número máximo de poligonos que podem ser renderizados, podendo ocupar uma posição de 0 a 15. Em caso de sucesso ao passar pelas verificações os barramentos recebem as informações que são enviadas oa driver por <i>preenche_buffer()</i>.
+É verificado também, se os valores das coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido. Por exemplo, caso o tamanho 1 do polígono seja escolhido (20x20 pixels) e as coordenadas x e y forem 9 e 9, o polígono é impresso na tela além dos limites permitidos de 512x480. Dessa forma, ocorre um erro nativo da arquitetura da GPU, em que os polígonos se deformam por toda a tela. Assim, o valor das coordenadas x e y não podem ser menores ou iguais ao tamanho do polígono dividido por 2 menos 1. Aproveitando do exemplo citado neste parágrafo, tamanho 1 = 20x20, logo (20/2) - 1 = 9, ou seja, um limite inválido para polígonos de tamanho 1, seria valores de x e y menores ou iguais a 9.
+
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+
+O <i>data_a</i> recebe o parâmetro referente a ordem de impressão em tela, possibilitando o controle da sobreposição dos polígonos e o opcode utilizado na GPU para esta instrução.
+
+O <i>data_b</i> recebe o restante dos parâmetros recebidos pela função, além do valor pré definido referente ao tipo de polígono a ser renderizado, neste caso, o valor 0 que representa um quadrado.
+
+Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver.
 
 <h4>Exibir triângulo:</h4>
 
-A GPU também consegue realizar a renderização de triângulos, a função criada para realizar esta funcionalidade é a <i>set_triangulo_dp()</i> que funciona nos mesmos moldes da criação dos quadrados, recebendo os mesmos parâmetros e realizando as mesmas verificações, entretanto, o primeiro bit atribuido ao barramento b é colocado igual a 1, indicando para a GPU que um triângulo deve ser renderizado, diferente da criação do quadrado que é indicado com um 0.
+A GPU também consegue realizar a renderização de triângulos. A função criada para realizar esta funcionalidade é a <i>set_triangulo_dp()</i>, que funciona nos mesmos moldes da criação dos quadrados, recebendo os mesmos parâmetros e realizando as mesmas verificações. Entretanto, o valor pré definido referente ao tipo de polígono a ser rendereziado é alterado para 1, indicando para a GPU que um triângulo deve ser renderizado, diferente da criação do quadrado que é indicado com um 0.
 
 <h4>Limpar a tela:</h4>
-Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela zera os atributos do background para apaga-lo, além de remover utilizando laços do tipo for em todos os itens renderizados. 
 
-Para apagar os blocos editados do background, dois laços aninhados percorrem de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente. Na remoção dos sprites e poligonos os laços funcionam chamando as respectivas funções responsáveis por cada item criado, todos os parâmetros de envio são zerados, a iteração passa por cada registrador para limpar os sprites e por cada posição na fila para desabilitar os polígonos.
+Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela atribui a cor nula ao background para apagá-lo, além de desabilitar, utilizando laços do tipo for, todos os sprites e polígonos renderizados. O loop passa por cada registrador para desativar os sprites e por cada posição na memória de instrução para desabilitar os polígonos, definindo seus tamanhos como 0. 
+
+Para apagar os blocos editados do background, dois laços aninhados percorrem de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente, desabilitando todos os 4800 blocos.
 
 <h4>Visualizando as funções</h4>
 A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definição de cada função explicada anteriormente, seus parâmetros e tipagem do retorno de cada uma delas.

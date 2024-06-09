@@ -7,16 +7,15 @@
 
 O discente Gabriel de Sá Barreto da Universidade Estadual de Feira de Santana (UEFS), desenvolveu em suas atividades de iniciação científica e trabalho de conclusão de curso um processador gráfico que permite o desenho, movimentação e controle de sprites e polígonos convexos (quadrados e triângulos) em um monitor VGA de resolução 680x480 pixels.
 
-Em seu projeto, Gabriel utilizou a plataforma NIOS II para processamento dos elementos, ela foi embarcada na mesma FPGA em que estava o processador gráfico, entretanto, na plataforma de desenvolvimento DE1-SOC, a NIOS II não é necessária devido a presença do processador ARM, isto no entanto gera um problema, não existe comunicação entre o processador gráfico implementado na FPGA e o HPS.
+Em seu projeto, Gabriel utilizou a plataforma NIOS II para processamento das instruções recebidas, onde a mesma, foi embarcada na mesma FPGA em que estava o processador gráfico. Entretanto, na plataforma de desenvolvimento DE1-SOC, a NIOS II não é necessária devido a presença do processador ARM (HPS). Isto no entanto gera um problema: não existe comunicação entre o processador gráfico implementado na FPGA e o HPS.
 
-Este projeto tem como objetivo resolver este problema desenvolvendo módulos kernel no HPS para o processador gráfico, além de desenvolver uma biblioteca c para facilitar o trabalho do programador durante o uso dos polígonos e sprites.
+Este projeto tem como objetivo resolver este problema desenvolvendo módulos kernel no HPS para o processador gráfico, além de desenvolver uma biblioteca C para facilitar o trabalho do programador no uso dos elementos e funcionalidades disponíveis.
 
 Os requisitos para elaboração do sistema são apresentados a seguir:
 
 * O código carregado na DE1-SoC deve ser feito em linguagem C;
 * A biblioteca deve conter no mínimo uma função para cada Instrução do Processador Gráfico;
-* A biblioteca deve seguir as recomendações descritas em: https://github.com/MaJerle/c-code-style;
-* Código em linguagem c demostrando a utilização de todos os elementos disponíveis em uma imagem que deve ser transmitida para o monitor CRT através da saída VGA
+* Código em linguagem C demostrando a utilização de todos os elementos disponíveis em uma imagem que deve ser transmitida para o monitor CRT através da saída VGA
 
 </div>
 
@@ -47,9 +46,9 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 
 Nesta seção, são apresentados os equipamentos e software utilizados durante o desenvolvimento do projeto.
 
-<h3> o kit de desenvolvimento DE1-SoC</h3>
+<h3> O kit de desenvolvimento DE1-SoC</h3>
 
-A placa DE1-SoC é um kit de desenvolvimento que combina um processador ARM Cortex-A9 dual-core com um FPGA Cyclone V da Intel. Essa placa oferece uma ampla gama de periféricos, incluindo porta VGA, porta Ethernet, USB, porta de áudio, entre outros, o que a torna ideal para projetos que envolvem tanto software quanto hardware. Ela é frequentemente utilizada em ambientes educacionais e de pesquisa para o desenvolvimento e aprendizado em sistemas embarcados e FPGA.
+A placa DE1-SoC é um kit de desenvolvimento que integra um processador ARM Cortex-A9 dual-core com um FPGA Cyclone V da Intel. Este dispositivo oferece uma variedade de periféricos, como display de 7 segmentos, porta Ethernet, USB, porta de áudio, entre outros, tornando-o adequado para projetos que exigem integração de software e hardware.
 
 <p align="center">
   <img src="Imagens/DE1-SOC.png" width = "400" />
@@ -58,7 +57,7 @@ A placa DE1-SoC é um kit de desenvolvimento que combina um processador ARM Cort
 
 <h3> Monitor CRT</h3>
 
-Durante o projeto, o monitor DELL m782p foi utilizado para a exibição de testes e imagem final do projeto. Ele utiliza a tecnologia CRT, que utiliza tubos de rais catódicos para o seu funcionamento, a saída VGA é a utilizada pelo monitor para a recepção de imagens.
+O monitor DELL m782p foi utilizado para a exibição de testes e imagem final do projeto. Ele possui uma tela de visualização de 17 polegadas e uma resolução máxima de 1280x1024 pixels, além de utilizar a tecnologia CRT, que utiliza tubos de raios catódicos para o seu funcionamento. A saída VGA é a utilizada pelo monitor para a exibição de imagens.
 
 <p align="center">
   <img src="Imagens/monitor.jpeg" width = "400" />
@@ -103,6 +102,11 @@ O processador ARM Cortex-A9 possui 15 registros de uso geral (R0 a R14), um cont
 
 O HPS inclui uma interface de memória que conecta o ARM MPCORE a uma memória DDR3 de 1 GB. Essa memória é comumente utilizada para armazenamento de programas e dados pelos processadores ARM. A memória é organizada em 256M x 32 bits e pode ser acessada por operações de palavra (32 bits), meia-palavra e byte.
 
+<h3>Mapeamento de Periféricos Implementados</h3>
+
+Os dispositivos implementados na FPGA são acessíveis ao processador ARM através do mapeamento na memória e podem ser acessados usando tanto a ponte HPS-to-FPGA quanto a ponte Lightweight HPS-to-FPGA. Quando um componente da FPGA está conectado a uma dessas pontes, os registradores mapeados
+na memória estão disponíveis para leitura e escrita pelo HPS na posição de memória da ponte.
+
 <h3>Diagrama de Blocos do Sistema DE1-SoC</h3>
 
 O sistema DE1-SoC é formado pelo Hard Processor System (HPS) e FPGA dentro do chip Cyclone V. O HPS inclui um processador dual-core ARM Cortex-A9, uma porta de memória DDR3 e dispositivos periféricos. O FPGA implementa dois processadores Intel Nios II e diversas portas periféricas.
@@ -140,15 +144,67 @@ A placa suporta a tecnologia de rede que permite a transmissão de dados a uma v
 
 Existem dois LEDs, LED verde (LEDG) e LED amarelo (LEDY), que representam o status da Ethernet PHY (KSZ9021RNI). A conexão da placa ao Gigabit Ethernet é estabelecida quando o LEDG acende.
 
-<h3>VGA</h3>
+<h3>Porta de Saída de Vídeo</h3>
 
-A placa é equipada com uma saída VGA que pode ser conectada a qualquer monitor VGA padrão. A saída suporta uma resolução de 680x480, a imagem gerada é derivada de duas fontes principais, um <i>pixel buffer</i> e um <i>character buffer</i>.
+A placa é equipada com uma porta de saída de vídeo com um controlador VGA, que pode ser conectada a qualquer monitor VGA padrão. A saída suporta uma resolução de 680x480, a imagem gerada é derivada de duas fontes principais, um <i>pixel buffer</i> e um <i>character buffer</i>.
 
 </div>
 </div>
 
 <div id="Arquitetura GPU"> 
-<h2> Arquitetura da GPU usada no projeto </h2>
+<h2> Arquitetura da GPU</h2>
 <div align="justify">
 
 Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas especificações e detalhes de funcionamento.
+
+</div>
+</div>
+
+<div id="execucaoProjeto"> 
+<h2> Execução do Projeto  </h2>
+<div align="justify">
+
+Para uso do driver e biblioteca, é necessário seguir os seguintes passos para obter o código-fonte, compilar o código em C, inserir o driver no kernel linux e executá-lo em um dispositivo FPGA DE1-SoC acoplado com a GPU de Gabriel Sá Barreto Alves. Na criação do dispositivo de caractere, é necessário ajustar o major number alocado dinamicamente ao driver pelo kernel. Ademais, também é preciso ajustar o caminho onde os arquivos gerados na compilação do módulo kernel serão armazenados.
+
+**Passo 1: Clonar o Repositório**
+
+Abra o terminal e execute o seguinte comando para obter o código do repositório:
+
+    git clone https://github.com/felipe-py/PBLSD_Barramentos.git
+
+**Passo 1.1: Ajustando major number do dispositivo de caractere**
+
+Caso necessário, na regra "all" do arquivo Makefile, ajuste o major number correspondente ao alocado pelo kernel no momento do carregamento do driver no sistema. O major number corresponde ao "X" mostrado no comando abaixo:
+
+    mknod /dev/driver_tp01_g02 c X 0
+  
+**Passo 1.2: Ajustando caminho de armazenamento dos arquivos gerados**
+
+Caso necessário, na variável "PWD" do arquivo Makefile, ajuste o caminho referente a onde os arquivos gerados na compilação do driver serão armazenados. Substitua as letras "r","e","t" no comando abaixo, pelo diretório atual:
+
+    PWD := /r/e/t/
+
+**Passo 2: Carregando e configurando driver**
+
+Para compilar, inserir o módulo kernel (driver) e criar um nó de dispositivo de caractere (arquivo especial), use o comando:
+
+    make
+
+**Passo 3: Compilar o Código em C**
+
+Para obter código teste da biblioteca, compile e execute o código usando o comando:
+
+    make run
+
+**Passo 4: Descarregando driver**
+
+Para apagar os arquivos gerados de compilação do módulo, remover o módulo do kernel e seu nó de dispositivo de caractere (arquivo especial), use o comando:
+
+    make clean
+
+Para apagar todos os arquivos do diretório, use o comando:
+
+    make clearAll
+
+</div>
+</div>

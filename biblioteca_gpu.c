@@ -215,7 +215,7 @@ edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
  *                  ref_y: coordenada Y do ponto de referência do polígono (0 ao 479)
  *                  ordem_impressao: ordem para sobreescrever polígonos (0 ao 15)
  *                  limite: variável usada para verificar se ref_x e ref_y não ultrapassam 
- *                          limite da tela a depender do tamanho do polígono 
+ *                          limite da tela a depender do tamanho do polígono (tamanho 0 não é verificado)
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
  */
 int 
@@ -232,9 +232,11 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
     } else if (azul < 0 || verde < 0 || vermelho < 0 || tamanho < 0 || ref_x < 0 || ref_y < 0 || ordem_impressao < 0) {
         fprintf(stderr, ERRO_SET_QUADRADO"Valor abaixo do permitido\n");
         return -1;
-    } else if (ref_x <= limite || ref_y <= limite) {
-        fprintf(stderr, ERRO_SET_QUADRADO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
-        return -1;
+    } else if (tamanho > 0){ 
+        if(ref_x <= limite || ref_y <= limite) {
+            fprintf(stderr, ERRO_SET_QUADRADO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
+            return -1;
+        }
     }
     
     /* Atribui valores decimais para serem convertidos em char para o buffer */
@@ -259,7 +261,7 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
  *                  ref_y: coordenada Y do ponto de referência do polígono (0 ao 479)
  *                  ordem_impressao: ordem para sobreescrever polígonos (0 ao 15)
  *                  limite: variável usada para verificar se ref_x e ref_y não ultrapassam 
- *                          limite da tela a depender do tamanho do polígono 
+ *                          limite da tela a depender do tamanho do polígono (tamanho 0 não é verificado)
  * retorno ->       0 caso seja bem sucedido ou -1 caso ocorra algum erro
  */
 int 
@@ -276,9 +278,11 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
     } else if (azul < 0 || verde < 0 || vermelho < 0 || tamanho < 0 || ref_x < 0 || ref_y < 0 || ordem_impressao < 0) {
         fprintf(stderr, ERRO_SET_TRIANGULO"Valor abaixo do permitido\n");
         return -1;
-    } else if (ref_x <= limite || ref_y <= limite) {
-        fprintf(stderr, ERRO_SET_TRIANGULO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
-        return -1;
+    } else if (tamanho > 0){ 
+        if(ref_x <= limite || ref_y <= limite) {
+            fprintf(stderr, ERRO_SET_QUADRADO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
+            return -1;
+        }
     }
     
     /* Atribui valores decimais para serem convertidos em char para o buffer */

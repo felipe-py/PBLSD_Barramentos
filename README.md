@@ -532,9 +532,11 @@ Também foram realizados testes para verificar a função de remover da tela tod
 <h2> Conclusão</h2>
 <div align="justify">
 
-O desenvolvimento de uma forma de comunicação entre a GPU implementada em uma plataforma FPGA e o HPS foi alcançado de forma satisfatória.
+O desenvolvimento de uma forma de comunicação entre a GPU implementada na FPGA e o HPS, por meio do código em linguagem C no kit de desenvolvimento DE1-SoC, provou ser eficiente e funcional. Durante o processo de implementação, todos os requisitos estabelecidos foram devidamente atendidos, utilizando da arquitetura da placa e da GPU.
 
-A criação de um driver em linguagem C que atuasse no recebimento de informações do espaço de usuário a partir de uma biblioteca que facilite o trabalho do programador na utilização das funções disponibilizadas pela GPU foi alcançada, e o projeto final com a construção de uma imagem utilizando os elementos disponíveis na GPU através da biblioteca criada foi realizado.
+A integração entre um driver que recebe informações do espaço de usuário e de uma biblioteca, que facilite o trabalho do programador no desenvolvimento de projetos que necessitem dos recursos desponibilizados pela GPU se mostrou eficaz. Nenhuma incoerência ou problema de desempenho foi encontrado neste quesito.
+
+Por fim, o desenvolvimento de uma imagem que utilize todos os elementos desenvolvidos, além de todas as funcionalidades disponíveis na GPU, comprova toda a integridade do sistema e sua completa funcionalidade.
 
 </div>
 </div>

@@ -596,6 +596,8 @@ Para apagar todos os arquivos do diretório, use o comando:
 
 ALVES, Gabriel Sá B.; DIAS, Anfranserai M.; SARINHO, Victor T.. Development of a Sprite-Based Architecture for Creating 2D Games in Reconfigurable Environments Using FPGA Devices. In: TRILHA DE COMPUTAÇÃO – ARTIGOS CURTOS - SIMPÓSIO BRASILEIRO DE JOGOS E ENTRETENIMENTO DIGITAL (SBGAMES), 21. , 2022, Natal/RN. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2022 . p. 283-288. 
 
+DE1-SoC Board. Disponível em: https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&No=836&PartNo=4. Acessado em: 11 de abril de 2024.
+
 Introduction — the Linux kernel documentation. Disponível em: <https://linux-kernel-labs.github.io/refs/heads/master/lectures/intro.html>. Acesso em: 11 jun. 2024.
 
 Driver implementer’s API guide — The Linux Kernel documentation. Disponível em: <https://docs.kernel.org/driver-api/index.html>. Acesso em: 11 jun. 2024.

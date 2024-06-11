@@ -3,7 +3,7 @@
 int main() {
 
     //Abre arquivo de comunicação com o driver
-    if (!open_driver ( )){
+    if (open_driver( ) == -1){
         return -1;
     }
 

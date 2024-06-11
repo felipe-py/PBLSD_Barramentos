@@ -381,7 +381,7 @@ Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atua
 
 Um dos polígonos que a GPU consegue renderizar é o quadrado. Para implementar está funcionalidade usamos a função <i>set_quadrado_dp()</i>, que recebe como parâmetro a cor de criação do quadrado a partir do RGB, o tamanho do quadrado a ser renderizado, a posição das coordenadas x e y que ele deve ocupar na tela e sua ordem de exibição na fila,  todos esses em sua representação decimal. Como mencionado anteriormente os valores para o RGB devem estar entre 0 e 7. Para o tamanho, o intervalo definido vai de 0 a 15, e em relação a coordenada x o valor deve estar entre 0 e 511 e entre 0 e 479 para coordenada y. A ordem de exibição na fila deve respeitar o número máximo de poligonos que podem ser renderizados em um frame, podendo ocupar uma posição de 0 a 15.
 
-É verificado também, se os valores das coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido. Por exemplo, caso o tamanho 1 do polígono seja escolhido (20x20 pixels) e as coordenadas x e y forem 9 e 9, o polígono é impresso na tela além dos limites permitidos de 512x480. Dessa forma, ocorre um erro nativo da arquitetura da GPU, em que os polígonos se deformam por toda a tela. Assim, o valor das coordenadas x e y não podem ser menores ou iguais ao tamanho do polígono dividido por 2 menos 1. Aproveitando do exemplo citado neste parágrafo, tamanho 1 = 20x20, logo (20/2) - 1 = 9, ou seja, um limite inválido para polígonos de tamanho 1, seria valores de x e y menores ou iguais a 9.
+É verificado também, se os valores das coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido. Por exemplo, caso o tamanho 1 do polígono seja escolhido (20x20 pixels) e as coordenadas x e y forem 9 e 9, o polígono é impresso na tela além dos limites permitidos de 512x480. Dessa forma, ocorre um erro nativo da arquitetura da GPU, em que os polígonos se deformam por toda a tela. Assim, o valor das coordenadas x e y não podem ser menores ou iguais ao tamanho do polígono dividido por 2 menos 1. Aproveitando do exemplo citado neste parágrafo, tamanho 1 = 20x20, logo (20/2) - 1 = 9, ou seja, um limite inválido para polígonos de tamanho 1, seria valores de x e y menores ou iguais a 9. Caso o tamanho do polígono seja 0, a verificação de limite não é feita.
 
 No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
 
@@ -437,26 +437,12 @@ Afim de garantir o correto carregamento e descarregamento no kernel do linux do 
 </p>
 <p align="center"><strong>Descarregando o módulo kernel no Linux</strong></p>
 
-* Abrindo comunicação com o dispositivo de caractere.
+* Abrindo e fechando comunicação com o dispositivo de caractere.
 
 <p align="center">
   <img src="Gifs/AbreDispositivo.gif" width = "400" />
 </p>
-<p align="center"><strong>Abre arquivo especial</strong></p>
-
-* Fechando comunicação com o dispositivo de caractere.
-
-<p align="center">
-  <img src="Gifs/FechaDispositivo.gif" width = "400" />
-</p>
-<p align="center"><strong>Fecha arquivo especial</strong></p>
-
-* Lendo dados do módulo kernel.
-
-<p align="center">
-  <img src="Gifs/LeDriver.gif" width = "400" />
-</p>
-<p align="center"><strong>Lê buffer do driver</strong></p>
+<p align="center"><strong>Abre e fecha o arquivo especial</strong></p>
 
 <h3>Biblioteca + Driver</h3>
 
@@ -608,4 +594,3 @@ Como COMPILAR um DRIVER no Linux. Disponível em: <https://mateusmuller.me/2019/
 
 </div>
 </div>
-

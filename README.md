@@ -242,9 +242,9 @@ O campo endereço indica a posição de memória em que a instrução será arma
 
 <h3>Comunicação com a GPU</h3>
 
-Para realizar a comunicação com o processador gráfico são utilizadas duas FIFOs (First In First Out) e um módulo gerador de pulso. O acesso as GPIOs (General-Purpose Input/Output) será feito pelo mapeamento de memória em que são associados determinados endereços de memória as entradas e saídas do sistema, assim garantindo acesso a todos os sinais e barramentos conectados a um processador de propósito geral, que permite, se fazendo uso de instruções personalizadas, realizar a distribuição dos campos das instruções do processador gráfico dentro dos barramentos “dataA” e “dataB” no momento do envio das informações.
+Para realizar a comunicação com o processador gráfico são utilizadas duas FIFOs (First In First Out) e um módulo gerador de pulso. O acesso as GPIOs (General-Purpose Input/Output) será feito pelo mapeamento de memória em que são associados determinados endereços de memória as entradas e saídas do sistema, assim garantindo acesso a todos os sinais e barramentos conectados a um processador de propósito geral, que permite, se fazendo uso de instruções personalizadas, realizar a distribuição dos campos das instruções do processador gráfico dentro dos barramentos *dataA* e *dataB* no momento do envio das informações.
 
-O barramento “dataA” é usado para opcodes e endereçamento do banco de registradores e memórias, enquanto que o barramento “dataB” é usado para o envio de dados a serem armazenados e/ou atualizados.
+O barramento *dataA* é usado para opcodes e endereçamento do banco de registradores e memórias, enquanto que o barramento *dataB* é usado para o envio de dados a serem armazenados e/ou atualizados.
 
 Com as instruções já devidamente alocadas em seus respectivos barramentos é necessário que o módulo gerador de pulso dê o sinal para permitir a escrita dessas informações nas FIFOs (uma para cada barramento) em um único pulso de clock que imediatamente após o envio da informação irá interromper esse sinal. Esse funcionamento que garante que a informação não será escrita múltiplas vezes enquanto o sistema esteja recebendo energia.
 
@@ -255,7 +255,98 @@ Com as instruções já devidamente alocadas em seus respectivos barramentos é 
 <h2> Driver para comunicação com a GPU</h2>
 <div align="justify">
 
+Aqui discutiremos sobre o driver desenvolvido e implementado para o projeto. Graças a ele, a comunicação entre a GPU (hardware) e as solicitações feitas a ela (software), é possível. Importante destacar que esse driver foi desenvolvido em conjunto com a biblioteca do projeto, e que apesar de ser possível de ser manipulado por outras bibliotecas é ideal que sejam usados em conjunto.
 
+<h3>Mapeamento de memória</h3>
+
+O driver é destinado, além de suas outras muitas utilidades, ao mapeamento de memória do HPS para ter acesso à FPGA, onde a GPU utilizada está embarcada.
+
+O processador ARM pode acessar a FPGA usando tanto a ponte HPS-to-FPGA quanto a ponte Lightweight HPS-to-FPGA. Logo, este mapeamento é realizado, acessando o espaço de memória da ponte Lightweight HPS-to-FPGA (lwhps2fpga) e se comunicando com a FPGA, onde os registradores mapeados na memória estão disponíveis para leitura e escrita pelo HPS na posição de memória da ponte.
+
+<p align="center">
+  <img src="Imagens/Pontes_FPGA.png" width = "600" />
+</p>
+<p align="center"><strong> Diagrama das pontes da FPGA</strong></p>
+
+Com isso, para acessar os barrementos da GPU, afim de ler e enviar dados para os mesmos, o mapeamento desta ponte é essencial. Com os endereços da ponte e dos deslocamentos necessários para acessar os barramentos da GPU em mãos, foram definidos alguns valores, em hexadecimal, que representam cada um:
+
+<b>LW_BRIDGE_BASE</b> que define o endereço físico base da <i>Lightweight HPS-to-FPGA Bridge</i>, citada anteriormente;
+
+<b>LW_BRIDGE_SPAN</b> que define o comprimento em bytes da região de memória a ser mapeada;
+
+<b>lw_virtual</b> é o endereço virtual que mapeia para o início do espaço de endereço físico citado anteriormente (*LW_BRIDGE_BASE*). Ao somar esse endereço virtual com determinados deslocamentos, o endereço de memória dos barramentos e sinais da GPU é alcançado.
+
+<b>DATA_A</b>, <b>DATA_B</b>, <b>WRREG</b> e <b>WRFULL</b> contém os valores de deslocamento para os barramentos e sinais da GPU: <i>DATA_A</i>,  <i>DATA_B</i>, <i>WRREG</i> e <i>WRFULL</i>, sendo <i>DATA_A</i> e  <i>DATA_B</i> referente aos barramentos <i>A</i> e <i>B</i> de dados dos buffers de instruções; <i>WRREG</i> o sinal de escrita no buffer de instrução; e <i>WRFULL</i> o sinal que informa se o buffer de instrução está cheio ou não. 
+
+Os valores estão descritos abaixo:
+
+*LW_BRIDGE_BASE: 0xFF200000*
+
+*LW_BRIDGE_SPAN: 0x100*
+
+*DATA_A: 0x80*
+
+*DATA_B: 0x70*
+
+*WRREG: 0xc0*
+
+*WRFULL: 0xb0*
+
+<h3>Driver de caractere</h3>
+
+Foi decidido a implementação de um dirver de caractere, pois a quantidade de dados a serem manipulados é baixa e sequencial, além dos dados transferidos serem diretamente entre o dispositivo e a memória. Drivers de caractere tendem a ser mais simples de implementar e podem ter menor sobrecarga em termos de recursos do sistema. Eles são eficientes para dispositivos que não necessitam de buffering extenso ou de acesso aleatório aos dados, que é exatamente as características do projeto.
+
+<h3>Detalhamento</h3>
+
+Aqui cabe destacar ainda que o driver nada mais é do que um *Kernel Module*, ou seja, é um arquivo que contém um código que é feito para estender uma funcionalidade do Kernel em tempo de execução, sendo carregado e descarregado conforme a necessidade.
+As funções implementadas garantem que o dispositivo possa ser aberto, fechado, lido e escrito de forma controlada e segura, exibindo mensagens apropriadas para indicar o status de cada operação.
+
+O driver se utiliza de duas estruturas (ou “structs”) , sendo elas: “dev_data” para identificar a partir do seu número (“devnum”) o dispositivo, bem como seu tipo (no caso, um “character device”), e *file_operations* que define as operações que podem ser realizadas no dispositivo, associando as funções de abertura, fechamento, leitura e escrita ao módulo proprietário.
+
+São definidos um total de 4 ponteiros aqui também, sendo um para cada endereço descrito em “Mapeamento de memória”: *DATA_A*, *DATA_B*, *WRREG* e *WRFULL*. Cabe apenas um pequeno destaque, de que como são ponteiros suas funções serão apenas armazenar os endereços de cada registrador para serem acessados e alterados conforme a necessidade.
+
+Ademais, foram criadas 2 variáveis globais, sendo:  *ret* com a finalidade de receber o retorno de certas funções; e *buffer_nucleo* que recebe uma sequência de 21 caracteres, usado na comunicação entre o *Kernel space* e o *User space*.
+
+<h3>Operações</h3>
+
+Adiante, serão descritas as operações presentes no driver e como elas funcionam.
+
+<h4><b>dev_init (Inicializa o módulo):</b></h4> 
+
+Aloca dinamicamente um número de dispositivo de caractere (major number), ou seja, permite que o kernel determine um número disponível no momento. Inicializa a estrutura “cdev”, responsável por associar as operações definidas no driver, e realiza o mapeamento com a ponte. Os ponteiros citados anteriormente, são associados a seus respectivos endereços mapeados, e se qualquer etapa falhar, mensagens de erro são exibidas e a inicialização é interrompida (caso contrário, uma mensagem de sucesso é exibida).
+	
+<h4><b>dev_exit (Encerra o módulo):</b></h4>
+
+O mapeamento da memória é desfeito, o registro do dispositivo de caractere é excluído e o número de dispositivo alocado é liberado Por fim uma mensagem indicando o encerramento do módulo é exibida.
+
+<h4><b>dev_open (Abre o módulo):</b></h4>
+
+Quando o arquivo do dispositivo é aberto, essa função é chamada. Ela simplesmente exibe uma mensagem informando que o dispositivo foi aberto com sucesso.
+
+<h4><b>dev_close (Fecha o dispositivo):</b></h4>
+
+Quando o arquivo do dispositivo é fechado, essa função é chamada. Assim como na abertura, ela exibe uma mensagem indicando que o dispositivo foi fechado com sucesso.
+
+<h4><b>dev_read (Lê o dispositivo):</b></h4>
+
+Esta função é responsável por copiar dados do buffer do núcleo para o buffer do usuário. Se a cópia falhar, uma mensagem de erro é exibida e retorna quantos bytes não foram copiados. Caso contrário, uma mensagem de sucesso é exibida.
+
+<h4><b>dev_write (Escreve no dispositivo):</b></h4>
+
+A função de escrita copia dados do buffer do usuário para o buffer do núcleo. Os dados do buffer do núcleo são então convertidos em inteiros sem sinal de 32 bits e enviados para os barramentos *DATA_A* e *DATA_B*.
+
+A conversão dos dados é feita utilizando-se de um loop para construir dois números inteiros sem sinal, um para o barramento *A* e outro para o *B*, a partir de uma sequência de caracteres numéricos recebidas do buffer do usuário.
+Cada iteração do loop multiplica o valor atual das variáveis por 10 (deslocando os dígitos para
+a esquerda - inteiro decimal) e adiciona o valor do próximo dígito, convertendo-o de caractere
+para número. Isso resulta na construção de um número inteiro a partir dos caracteres sequenciais
+no buffer. No sistema de codificação ASCII, os caracteres numéricos '0' a '9' são representados
+por valores consecutivos (48 a 57). Subtraindo o valor ASCII do caractere '0' (que é 48) do valor
+ASCII de outro caractere numérico, obtemos o valor numérico correspondente.
+Por exemplo, '9' - '0' = 57 - 48 = 9.
+
+Ademais, um sinal é enviado indicando que as instruções enviadas devem ser escritas nas FIFO’s. Se qualquer etapa falhar, uma mensagem de erro é exibida, caso contrário uma mensagem de sucesso é exibida.
+
+É importante salientar que é utilizado uma verificação usando o sinal *wrfull*, para verificar se as FIFO’s alcançaram o limite máximo de instruções armazenadas. Ela conta com um loop que dura até que as FIFO’s liberem espaço para receber novas instruções. Desta forma, instruções a serem enviadas não saõ “perdidas”.
 
 </div>
 </div>
@@ -486,28 +577,28 @@ Também foram realizados testes para verificar a função de remover da tela tod
 * Limpando a tela.
 
 <p align="center">
-  <img src="Gifs/LimpaTela.gif" width = "400" />
+  <img src="Gifs/limpar_tela.gif" width = "400" />
 </p>
 <p align="center"><strong>Remove da tela elementos utilizados</strong></p>
 
-* Passando dados inválidos para <i>set_cor_background_wbr</i>.
+* Passando *vermelho* maior que o permitido para <i>set_cor_background_wbr</i>.
 
 <p align="center">
   <img src="Gifs/ErroCorBackground.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 
-* Passando dados inválidos para <i>set_sprite_wbr</i>.
+* Passando <i>offset</i> menor que o permitido para <i>set_sprite_wbr</i>.
 
 <p align="center">
   <img src="Gifs/ErroSprite.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 
-* Passando dados inválidos para <i>set_quadrado_dp</i>.
+* Passando <i>ref_x</i> e <i>ref_y</i> menor que o permitido de <i>tamanho</i> 1 para <i>set_quadrado_dp</i>.
 
 <p align="center">
-  <img src="Gifs/ErroQuadrado.gif" width = "400" />
+  <img src="Gifs/ErrroQuadrado.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 

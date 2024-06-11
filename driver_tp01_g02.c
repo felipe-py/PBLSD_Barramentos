@@ -113,15 +113,7 @@ static ssize_t dev_write(struct file* file, const char* buffer_user, size_t buff
 
     int i = 0;
 
-    /* É usado para construir um número inteiro a partir de uma sequência de caracteres numéricos. 
-    Cada iteração do loop multiplica o valor atual das variáveis por 10 (deslocando os dígitos para
-    a esquerda - inteiro decimal) e adiciona o valor do próximo dígito, convertendo-o de caractere 
-    para número. Isso resulta na construção de um número inteiro a partir dos caracteres sequenciais 
-    no buffer. No sistema de codificação ASCII, os caracteres numéricos '0' a '9' são representados 
-    por valores consecutivos (48 a 57). Subtraindo o valor ASCII do caractere '0' (que é 48) do valor
-    ASCII de outro caractere numérico, obtemos o valor numérico correspondente.
-    Por exemplo, '9' - '0' = 57 - 48 = 9.*/ 
-
+    /* Converte caractere para número */
     for (i = 0; i < 20; ++i) {
         if (i < 10) {       /* Pega 10 primeiros caracteres do buffer e converte para número */
             data_b = data_b * 10 + (buffer_nucleo[i] - '0');   

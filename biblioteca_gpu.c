@@ -233,7 +233,7 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
         fprintf(stderr, ERRO_SET_QUADRADO"Valor abaixo do permitido\n");
         return -1;
     } else if (tamanho > 0){ 
-        if(ref_x <= limite || ref_y <= limite) {
+        if (ref_x <= limite || ref_y <= limite) {
             fprintf(stderr, ERRO_SET_QUADRADO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
             return -1;
         }
@@ -279,7 +279,7 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
         fprintf(stderr, ERRO_SET_TRIANGULO"Valor abaixo do permitido\n");
         return -1;
     } else if (tamanho > 0){ 
-        if(ref_x <= limite || ref_y <= limite) {
+        if (ref_x <= limite || ref_y <= limite) {
             fprintf(stderr, ERRO_SET_QUADRADO"Valor da coordenada x ou y abaixo do limite permitido pelo tamanho\n");
             return -1;
         }

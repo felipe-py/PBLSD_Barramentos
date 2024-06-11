@@ -589,3 +589,21 @@ Para apagar todos os arquivos do diretório, use o comando:
 
 </div>
 </div>
+
+<div id="referencias"> 
+<h2> Referências  </h2>
+<div align="justify">
+
+ALVES, Gabriel Sá B.; DIAS, Anfranserai M.; SARINHO, Victor T.. Development of a Sprite-Based Architecture for Creating 2D Games in Reconfigurable Environments Using FPGA Devices. In: TRILHA DE COMPUTAÇÃO – ARTIGOS CURTOS - SIMPÓSIO BRASILEIRO DE JOGOS E ENTRETENIMENTO DIGITAL (SBGAMES), 21. , 2022, Natal/RN. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2022 . p. 283-288. 
+
+Introduction — the Linux kernel documentation. Disponível em: <https://linux-kernel-labs.github.io/refs/heads/master/lectures/intro.html>. Acesso em: 11 jun. 2024.
+
+Driver implementer’s API guide — The Linux Kernel documentation. Disponível em: <https://docs.kernel.org/driver-api/index.html>. Acesso em: 11 jun. 2024.
+
+Understanding the Structure of a Linux Kernel Device Driver. Sergio Prado, , 12 jun. 2021. Disponível em: <https://www.youtube.com/watch?v=XoYkHUnmpQo>
+
+Como COMPILAR um DRIVER no Linux. Disponível em: <https://mateusmuller.me/2019/11/27/como-compilar-um-driver-no-linux/>. Acesso em: 11 jun. 2024.
+
+</div>
+</div>
+

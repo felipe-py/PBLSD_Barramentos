@@ -440,7 +440,7 @@ Afim de garantir o correto carregamento e descarregamento no kernel do linux do 
 * Abrindo e fechando comunicação com o dispositivo de caractere.
 
 <p align="center">
-  <img src="Gifs/AbreDispositivo.gif" width = "400" />
+  <img src="Gifs/AbrindoFechando.gif" width = "400" />
 </p>
 <p align="center"><strong>Abre e fecha o arquivo especial</strong></p>
 
@@ -493,21 +493,21 @@ Também foram realizados testes para verificar a função de remover da tela tod
 * Passando dados inválidos para <i>set_cor_background_wbr</i>.
 
 <p align="center">
-  <img src="Imagens/ErroSetCorBackground.png" width = "400" />
+  <img src="Gifs/ErroCorBackground.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 
 * Passando dados inválidos para <i>set_sprite_wbr</i>.
 
 <p align="center">
-  <img src="Imagens/ErroSetSprite.png" width = "400" />
+  <img src="Gifs/ErroSprite.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 
 * Passando dados inválidos para <i>set_quadrado_dp</i>.
 
 <p align="center">
-  <img src="Imagens/ErroSetQuadrado.png" width = "400" />
+  <img src="Gifs/ErroQuadrado.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 

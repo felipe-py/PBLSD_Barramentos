@@ -426,7 +426,14 @@ O <i>data_a</i> recebe o parâmetro referente ao registrador para armazenar o sp
 
 O <i>data_b</i> recebe o restante dos parâmetros recebidos pela função.
 
-Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver. 
+Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver.
+
+A seguir, a exibição da sequência de sprites atuais armazenados na memória de dados da GPU, na ordem de visualização da esquerda para a direita, e de cima para baixo. O primeiro sprite é representado por 0 e o último por 24.
+
+<p align="center">
+  <img src="Imagens/sprites_gpu.png" width = "400" />
+</p>
+<p align="center"><strong> Sprites disponíveis atualmente na memória de dados</strong></p>
 
 <h4><b>Editar background:</b></h4>
 
@@ -673,15 +680,19 @@ Para apagar todos os arquivos do diretório, use o comando:
 
 ALVES, Gabriel Sá B.; DIAS, Anfranserai M.; SARINHO, Victor T.. Development of a Sprite-Based Architecture for Creating 2D Games in Reconfigurable Environments Using FPGA Devices. In: TRILHA DE COMPUTAÇÃO – ARTIGOS CURTOS - SIMPÓSIO BRASILEIRO DE JOGOS E ENTRETENIMENTO DIGITAL (SBGAMES), 21. , 2022, Natal/RN. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2022 . p. 283-288. 
 
-DE1-SoC Board. Disponível em: https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&No=836&PartNo=4. Acessado em: 11 de abril de 2024.
+DE1-SoC Board. Disponível em: https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&No=836&PartNo=4. Acessado em: 13 de maio de 2024.
 
-Introduction — the Linux kernel documentation. Disponível em: <https://linux-kernel-labs.github.io/refs/heads/master/lectures/intro.html>. Acesso em: 11 jun. 2024.
+Intel® FPGA University Program DE1-SoC Computer Manual. Disponível em: https://ftp.intel.com/Public/Pub/fpgaup/pub/Intel_Material/18.1/Computer_Systems/DE1-SoC/DE1-SoC_Computer_NiosII.pdf. Acessado em: 13 de maio de 2024.
 
-Driver implementer’s API guide — The Linux Kernel documentation. Disponível em: <https://docs.kernel.org/driver-api/index.html>. Acesso em: 11 jun. 2024.
+Using Linux on DE-Series Boards. Disponível em: https://github.com/fpgacademy/Tutorials/releases/download/v21.1/Linux_with_ARM_A9.pdf. Acessado em: 13 de maio de 2024.
 
-Understanding the Structure of a Linux Kernel Device Driver. Sergio Prado, , 12 jun. 2021. Disponível em: <https://www.youtube.com/watch?v=XoYkHUnmpQo>
+Introduction — the Linux kernel documentation. Disponível em: https://linux-kernel-labs.github.io/refs/heads/master/lectures/intro.html. Acesso em: 21 de maio 2024.
 
-Como COMPILAR um DRIVER no Linux. Disponível em: <https://mateusmuller.me/2019/11/27/como-compilar-um-driver-no-linux/>. Acesso em: 11 jun. 2024.
+Driver implementer’s API guide — The Linux Kernel documentation. Disponível em: <https://docs.kernel.org/driver-api/index.html>. Acesso em: 21 de maio 2024.
+
+Understanding the Structure of a Linux Kernel Device Driver. Sergio Prado, , 12 jun. 2021. Disponível em: <https://www.youtube.com/watch?v=XoYkHUnmpQo>. Acessado em: 21 de maio de 2024.
+
+Como COMPILAR um DRIVER no Linux. Disponível em: <https://mateusmuller.me/2019/11/27/como-compilar-um-driver-no-linux/>. Acesso em: 17 de maio 2024.
 
 </div>
 </div>

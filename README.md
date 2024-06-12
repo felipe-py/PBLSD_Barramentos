@@ -15,7 +15,7 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 
 * O código carregado na DE1-SoC deve ser feito em linguagem C;
 * A biblioteca deve conter no mínimo uma função para cada Instrução do Processador Gráfico;
-* Código em linguagem C demostrando a utilização de todos os elementos disponíveis em uma imagem que deve ser transmitida para o monitor CRT através da saída VGA
+* Código em linguagem C demostrando a utilização de todos os elementos disponíveis em uma imagem que deve ser transmitida para o monitor CRT através da saída VGA.
 
 </div>
 
@@ -36,6 +36,7 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
         <li><a href="#Arquitetura GPU"> Arquitetura da GPU</a></li>
         <li><a href="#Driver uso GPU"> Driver para comunicação com a GPU </a></li>
 	      <li><a href="#Biblioteca uso GPU"> Biblioteca para uso da GPU </a></li>
+        <li><a href="#solucao-geral"> Solução Geral do projeto </a></li>  
         <li><a href="#testes"> Testes</a></li>
         <li><a href="#conclusao"> Conclusão </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
@@ -160,7 +161,7 @@ A placa é equipada com uma porta de saída de vídeo com um controlador VGA, qu
 
 Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas especificações e detalhes de funcionamento.
 
-A GPU usada neste projeto possui capacidade de renderizar uma tela de 640 x 480 pixels que será projetada em monitor com o padrão VGA possuindo frequência de 60 quadros por segundo (*QPS* ou *FPS*), podendo projetar nessa tela, além de uma cor de fundo, 2 tipos de polígonos convexos (quadrado e triângulo) ou um conjunto predefinido de sprites (já previamente alocados em memória física).
+A GPU usada neste projeto possui capacidade de renderizar uma tela de 640x480 pixels que será projetada em monitor com o padrão VGA possuindo frequência de 60 quadros por segundo (*QPS* ou *FPS*), podendo projetar nessa tela, além de uma cor de fundo, 2 tipos de polígonos convexos (quadrado e triângulo) ou um conjunto predefinido de sprites (já previamente alocados em memória física).
 
 <h3>Módulos internos</h3>
 
@@ -201,7 +202,7 @@ A primeira forma dessa instrução se dá quando queremos mudar a cor de backgro
 </p>
 <p align="center"><strong> Formato instrução WBR (1)</strong></p>
 
-A segunda forma da instrução se dá quando queremos manipular algum sprite, continua usando um *opcode*, e um campo de registrador, mas em seguida é passado um *offset* (9 bits) que dará o endereço de memória do sprite a ser configurado, em seguida temos as coordenadas em que o sprite será posto em X e Y (10 bits para cada um, para poder representar as 640 posições verticais), e por fim um bit *sp*, para habilitar/desabilitar o desenho do sprite na tela.
+A segunda forma da instrução se dá quando queremos manipular algum sprite, continua usando um *opcode*, e um campo de registrador, mas em seguida é passado um *offset* (9 bits) que dará o endereço de memória do sprite a ser configurado, em seguida temos as coordenadas em que o sprite será posto em X e Y (10 bits para cada um, para poder representar o limite de resolução 640x480), e por fim um bit *sp*, para habilitar/desabilitar o desenho do sprite na tela.
 
 <p align="center">
   <img src="Imagens/instrucao_WBR2.png" width = "600" />
@@ -268,7 +269,7 @@ O processador ARM pode acessar a FPGA usando tanto a ponte HPS-to-FPGA quanto a 
 </p>
 <p align="center"><strong> Diagrama das pontes da FPGA</strong></p>
 
-Com isso, para acessar os barrementos da GPU, afim de ler e enviar dados para os mesmos, o mapeamento desta ponte é essencial. Com os endereços da ponte e dos deslocamentos necessários para acessar os barramentos da GPU em mãos, foram definidos alguns valores, em hexadecimal, que representam cada um:
+Com isso, para acessar os barrementos e sinais da GPU, afim de ler e enviar dados para os mesmos, o mapeamento desta ponte é essencial. Com os endereços da ponte e dos deslocamentos necessários para acessar os registradores da GPU em mãos, foram definidos alguns valores, em hexadecimal, que representam cada um:
 
 <b>LW_BRIDGE_BASE</b> que define o endereço físico base da <i>Lightweight HPS-to-FPGA Bridge</i>, citada anteriormente;
 
@@ -298,7 +299,7 @@ Foi decidido a implementação de um dirver de caractere, pois a quantidade de d
 
 <h3>Detalhamento</h3>
 
-Aqui cabe destacar ainda que o driver nada mais é do que um *Kernel Module*, ou seja, é um arquivo que contém um código que é feito para estender uma funcionalidade do Kernel em tempo de execução, sendo carregado e descarregado conforme a necessidade.
+Aqui cabe destacar que o driver nada mais é do que um *Kernel Module*, ou seja, é um arquivo que contém um código que é feito para estender uma funcionalidade do Kernel em tempo de execução, sendo carregado e descarregado conforme a necessidade.
 As funções implementadas garantem que o dispositivo possa ser aberto, fechado, lido e escrito de forma controlada e segura, exibindo mensagens apropriadas para indicar o status de cada operação.
 
 O driver se utiliza de duas estruturas (ou “structs”) , sendo elas: “dev_data” para identificar a partir do seu número (“devnum”) o dispositivo, bem como seu tipo (no caso, um “character device”), e *file_operations* que define as operações que podem ser realizadas no dispositivo, associando as funções de abertura, fechamento, leitura e escrita ao módulo proprietário.
@@ -363,7 +364,7 @@ Quatro variáveis são criadas para serem utilizadas entre as funções presente
 
 <h4><i>data_a</i> e <i>data_b</i>:</h4>
 
-Essas variáveis são números inteiros sem sinal de 32 bits que representam os dados a serem enviados para o driver para os barramentos "data_a" e "data_b" da GPU. Essas variáveis são acessíveis e editadas pelas funções da biblioteca a depender dos dados recebidos por parâmetro.
+Essas variáveis são números inteiros sem sinal de 32 bits que representam os dados a serem enviados para o driver para os barramentos *data_a* e *data_b* da GPU. Essas variáveis são acessíveis e editadas pelas funções da biblioteca a depender dos dados recebidos por parâmetro.
 
 <h4><i>fd</i>:</h4>
 
@@ -371,7 +372,7 @@ Essa variável representa um identificador único do arquivo do dispositivo de c
 
 <h4><i>buffer_user</i>:</h4>
 
-Essa variável representa o buffer da biblioteca, onde serão guardados os dados a serem enviados ao buffer do driver. Como cada barramento (A e B) localizado na GPU suportam 32 bits cada, o maior número inteiro sem sinal que eles suportam é 2^32 - 1 = 4.294.967.295, ou seja, um número de 10 dígitos máximo.
+Essa variável representa o buffer da biblioteca, onde serão guardados os dados a serem enviados ao buffer do driver. Como cada barramento (A e B) localizado na GPU suportam 32 bits cada, o maior número inteiro sem sinal que eles suportam é (2^32) - 1 = 4.294.967.295, ou seja, um número de 10 dígitos máximo.
 
 Assim, as posições 0 a 9 desse buffer, irão conter os 10 dígitos de um número inteiro sem sinal para o barramento b e as posições 10 a 19 irão conter os 10 dígitos de um número inteiro sem sinal para o barramento a. É definido o tamanho de 21 para evitar possíveis estouros de array.
 
@@ -381,7 +382,7 @@ Três funções são utlizadas para interligar a biblioteca ao driver. São elas
 
 <h4><b>Abertura do driver:</b></h4>
 
- A primeira delas é a <i>open_driver()</i>. Seu objetivo é abrir o dispositivo de caractere atribuído ao driver para iniciar a comunicação entre driver e biblioteca, retornando erro caso a abertura do arquivo não se concretize. 
+ A primeira delas é a <i>open_driver()</i>. Seu objetivo é acessar o dispositivo de caractere atribuído ao driver para iniciar a comunicação entre driver e biblioteca, sendo possível a transferência de dados do espaço de usuário para o espaço de núcleo, retornando erro caso o acesso ao dispositivo não se concretize. 
  
  <h4><b>Fechar driver:</b></h4>
  
@@ -406,7 +407,7 @@ Funções para utilização e controle dos elementos disponibilizados pela GPU f
 
 A função <i>set_cor_background_wbr()</i>, recebe como parâmetro as cores RGB (vermelho, verde e azul) em sua representação decimal. Ela realiza verificações para tratar casos em que os valores recebidos são negativos ou maiores que 7, intervalo que é incompatível com as especificações da GPU. 
 
-No caso de valores recebidos dentro do intervalo permitido (entre 0 e 7), os valores informados serão convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+No caso de valores recebidos dentro do intervalo permitido (entre 0 e 7), os valores informados serão convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "OR". 
 
 O <i>data_a</i> recebe o valor 0, referente ao registrador e o opcode utilizado na GPU para esta instrução.
 
@@ -418,9 +419,9 @@ Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atua
 
 A função <i>set_sprite_wbr()</i> recebe como parâmetro o bit de ativação do sprite, as coordenadas x e y onde deve ser exibido o sprite em tela, o sprite a ser exibido e o registrador em que ele será armazenado, todos esses em sua representação decimal. Verificações são feitas para assegurar que o código de ativação do sprite seja igual a 0 ou 1 e que sua localização na tela respeite os limites suportados pela GPU, que vão de 0 a 639 para x e de 0 a 479 para y. 
 
-É verificado também se o valor que representa o sprite escolhido e o registrador que armazenará ele está dentro do intervalo de 1 a 31 e 0 a 31, respectivamente, representando a quantidade total de sprites e registradores disponíveis para armazenamento.
+É verificado também se o valor que representa o sprite escolhido e o registrador que armazenará ele está dentro do intervalo de 0 a 31 e 1 a 31, respectivamente, representando a quantidade total de sprites e registradores disponíveis para armazenamento.
 
-No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "OR". 
 
 O <i>data_a</i> recebe o parâmetro referente ao registrador para armazenar o sprite e o opcode utilizado na GPU para esta instrução.
 
@@ -437,11 +438,11 @@ A seguir, a exibição da sequência de sprites atuais armazenados na memória d
 
 <h4><b>Editar background:</b></h4>
 
-Para realizar a edição do background é utilizada a função <i>edit_bloco_background_wbm()</i>. Ela recebe como parâmetro as coordenadas x e y, referentes de forma respectiva a linha e coluna de um bloco do background a ser editado, além da nova cor que será alocada a este bloco, todos esses em sua representação decimal. No escopo da função, é criada uma variável que representa o bloco do background que será editado. Ela armazena o resultado do valor da coordenada y recebida (linha) multiplicado por 80 (número total de colunas), somado a coordenada x recebida (coluna). Esse cálculo resulta em um dos 4800 blocos que compõem o blackground.
+Para realizar a edição do background é utilizada a função <i>edit_bloco_background_wbm()</i>. Ela recebe como parâmetro as coordenadas x e y, referentes de forma respectiva a coluna e linha de um bloco do background a ser editado, além da nova cor que será alocada a este bloco, todos esses em sua representação decimal. No escopo da função, é criada uma variável que representa o bloco do background que será editado. Ela armazena o resultado do valor da coordenada y recebida (linha) multiplicado por 80 (número total de colunas), somado a coordenada x recebida (coluna). Esse cálculo resulta em um dos 4800 blocos que compõem o blackground.
 
 É verificado se o valor da variável está dentro do limite permitido de blocos editáveis do background, que vai de 0 a 4799, e se o valor que representa cada cor no RGB está dentro do permitido que vai de 0 a 7.
 
-No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "OR". 
 
 O <i>data_a</i> recebe a variável que indica um dos blocos a ser editado e o opcode utilizado na GPU para esta instrução.
 
@@ -455,7 +456,7 @@ Nos mesmos moldes da função anterior, podemos desabilitar um bloco especifíco
 
 As mesmas verificações para limite permitido de blocos editáveis do background são usadas.
 
-No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "OR". 
 
 O <i>data_a</i> recebe a variável que indica um dos blocos a ser desabilitado e o opcode utilizado na GPU para esta instrução.
 
@@ -467,7 +468,7 @@ Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atua
 
 Para realizar a edição dos sprites armazenados ou criação de novos, é utilizada a função <i>edit_sprite_wsm()</i>. Ela recebe como parâmetro um endereço que se refere ao pixel a ser editado ou criado de um sprite e as cores RGB que esse pixel vai receber, todos esses em sua representação decimal. Verificações são feitas para assegurar que o endereço represente um número presente no intervalo da memória de sprites e se o valor que representa cada cor no RGB está dentro do permitido.
 
-No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "OR". 
 
 O <i>data_a</i> recebe o parâmetro referente ao endereço para editar ou criar um pixel de um sprite e o opcode utilizado na GPU para esta instrução.
 
@@ -479,9 +480,9 @@ Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atua
 
 Um dos polígonos que a GPU consegue renderizar é o quadrado. Para implementar está funcionalidade usamos a função <i>set_quadrado_dp()</i>, que recebe como parâmetro a cor de criação do quadrado a partir do RGB, o tamanho do quadrado a ser renderizado, a posição das coordenadas x e y que ele deve ocupar na tela e sua ordem de exibição na fila,  todos esses em sua representação decimal. Como mencionado anteriormente os valores para o RGB devem estar entre 0 e 7. Para o tamanho, o intervalo definido vai de 0 a 15, e em relação a coordenada x o valor deve estar entre 0 e 511 e entre 0 e 479 para coordenada y. A ordem de exibição na fila deve respeitar o número máximo de poligonos que podem ser renderizados em um frame, podendo ocupar uma posição de 0 a 15.
 
-É verificado também, se os valores das coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido. Por exemplo, caso o tamanho 1 do polígono seja escolhido (20x20 pixels) e as coordenadas x e y forem 9 e 9, o polígono é impresso na tela além dos limites permitidos de 512x480. Dessa forma, ocorre um erro nativo da arquitetura da GPU, em que os polígonos se deformam por toda a tela. Assim, o valor das coordenadas x e y não podem ser menores ou iguais ao tamanho do polígono dividido por 2 menos 1. Aproveitando do exemplo citado neste parágrafo, tamanho 1 = 20x20, logo (20/2) - 1 = 9, ou seja, um limite inválido para polígonos de tamanho 1, seria valores de x e y menores ou iguais a 9. Caso o tamanho do polígono seja 0, a verificação de limite não é feita.
+É verificado também, se os valores das coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido. Por exemplo, caso o tamanho 1 do polígono seja escolhido (20x20 pixels) e as coordenadas x e y forem 9 e 9, o polígono é impresso na tela além dos limites permitidos de 512x480. Dessa forma, ocorre um erro nativo da arquitetura da GPU, em que os polígonos se deformam por toda a tela. Assim, o valor das coordenadas x e y não podem ser menores ou iguais ao tamanho do polígono dividido por 2 menos 1. Aproveitando do exemplo citado neste parágrafo, tamanho 1 = 20x20, logo (20/2) - 1 = 9, ou seja, um limite inválido para polígonos de tamanho 1, seriam valores de x e y menores ou iguais a 9. Caso o tamanho do polígono seja 0, a verificação de limite não é feita.
 
-No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "or". 
+No caso dos valores recebidos estarem dentro dos intervalos permitidos, eles são convertidos em números inteiros sem sinais de 32 bits para as variáveis globais <i>data_a</i> e <i>data_b</i>, através da junção das operações de deslocamento de bits e a operação "OR". 
 
 O <i>data_a</i> recebe o parâmetro referente a ordem de impressão em tela, possibilitando o controle da sobreposição dos polígonos e o opcode utilizado na GPU para esta instrução.
 
@@ -495,7 +496,7 @@ A GPU também consegue realizar a renderização de triângulos. A função cria
 
 <h4><b>Limpar a tela:</b></h4>
 
-Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela atribui a cor nula ao background para apagá-lo, além de desabilitar, utilizando laços do tipo for, todos os sprites e polígonos renderizados. O loop passa por cada registrador para desativar os sprites e por cada posição na memória de instrução para desabilitar os polígonos, definindo seus tamanhos como 0. 
+Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela atribui a cor nula ao background para apagá-lo, além de desabilitar, utilizando de loops, todos os sprites e polígonos renderizados. O loop passa por cada registrador para desativar os sprites e por cada posição na memória de instrução para desabilitar os polígonos, definindo seus tamanhos como 0. 
 
 Para apagar os blocos editados do background, dois laços aninhados percorrem de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente, desabilitando todos os 4800 blocos.
 
@@ -511,6 +512,32 @@ A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definiçã
 </div>
 </div>
 
+<div id="solucao-geral"> 
+<h2> Solução Geral do projeto </h2>
+<div align="justify">
+
+A solução abrangente deste projeto reflete sua total capacidade de atender a todos os requisitos especificados. O primeiro passo, é carregar o módulo kernel desenvolvido no Linux, afim da comunicação com os barramentos e sinais da GPU, ser possível.
+
+Uma vez carregado, o segundo passo é criar um dispositivo de caractere para interagir com o módulo kernel carregado (driver de dispositivo), fazendo assim, a comunicação do espaço de usuário com o espaço de núcleo.
+
+A partir disso, a função de abertura da biblioteca deve ser chamada para iniciar a comunicação da biblioteca com o dispositivo de caractere devidamente criado.
+
+Com o êxito de todos esses passos, resta somente a utilização das funções disponíveis para uso na biblioteca. Com a utilização das mesmas, foi possível criar uma imagem que será detalhada na próxima seção.
+
+Após a utilização da biblioteca, é preciso chamar a função de encerramento, afim de finalizar a comunicação com o dispositivo de caractere.
+
+Por se tratar de um módulo kernel, após a utilização do mesmo, é necessário descarregá-lo do kernel do Linux e excluir o dispositivo de caractere criado.
+
+Para melhor compreensão da explicação, fornecemos o seguinte diagrama de fluxo detalhando os passos descritos na solução geral.
+
+<p align="center">
+  <img src="Imagens/Fluxograma1.png" width = "500" />
+</p>
+<p align="center"><strong> Fluxograma da solução geral do problema</strong></p>
+
+</div>
+</div>
+
 <div id="testes"> 
 <h2> Testes </h2>
 <div align="justify">
@@ -519,7 +546,7 @@ A seguir, a descrição dos testes realizados para garantir o adequado funcionam
 
 <h3>Driver</h3>
 
-Afim de garantir o correto carregamento e descarregamento no kernel do linux do driver desenvolvido, além de algumas outras operações, foram realizados alguns testes descritos a seguir.
+Afim de garantir o correto carregamento e descarregamento no kernel do Linux do driver desenvolvido, além de algumas outras operações, foram realizados alguns testes descritos a seguir.
 
 * Inicializando o módulo kernel.
 
@@ -533,7 +560,7 @@ Afim de garantir o correto carregamento e descarregamento no kernel do linux do 
 <p align="center">
   <img src="Gifs/DescarregaDriver.gif" width = "400" />
 </p>
-<p align="center"><strong>Descarregando o módulo kernel no Linux</strong></p>
+<p align="center"><strong>Descarregando o módulo kernel do Linux</strong></p>
 
 * Abrindo e fechando comunicação com o dispositivo de caractere.
 
@@ -629,7 +656,7 @@ Por fim, o desenvolvimento de uma imagem que utilize todos os elementos desenvol
 <h2> Execução do Projeto  </h2>
 <div align="justify">
 
-Para uso do driver e biblioteca, é necessário seguir os seguintes passos para obter o código-fonte, compilar o código em C, inserir o driver no kernel linux e executá-lo em um dispositivo FPGA DE1-SoC acoplado com a GPU de Gabriel Sá Barreto Alves. Na criação do dispositivo de caractere, é necessário ajustar o major number alocado dinamicamente ao driver pelo kernel. Ademais, também é preciso ajustar o caminho onde os arquivos gerados na compilação do módulo kernel serão armazenados.
+Para uso do driver e biblioteca, é necessário seguir os seguintes passos para obter o código-fonte, compilar o código em C, inserir o driver no kernel Linux, criar o dispositivo de caractere e executá-lo em um dispositivo FPGA DE1-SoC acoplado com a GPU de Gabriel Sá Barreto Alves. Na criação do dispositivo de caractere, é necessário ajustar o major number alocado dinamicamente ao driver pelo kernel. Ademais, também é preciso ajustar o caminho onde os arquivos gerados na compilação do módulo kernel serão armazenados.
 
 **Passo 1: Clonar o Repositório**
 

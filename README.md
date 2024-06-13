@@ -368,7 +368,7 @@ Essas variáveis são números inteiros sem sinal de 32 bits que representam os 
 
 <h4><i>fd</i>:</h4>
 
-Essa variável representa um identificador único do arquivo do nó de dispositivo de caractere do driver.
+Essa variável representa um identificador único do arquivo do nó para o dispositivo de caractere (driver).
 
 <h4><i>buffer_user</i>:</h4>
 
@@ -382,11 +382,11 @@ Três funções são utlizadas para interligar a biblioteca ao driver. São elas
 
 <h4><b>Abertura do driver:</b></h4>
 
- A primeira delas é a <i>open_driver()</i>. Seu objetivo é acessar o nó do dispositivo de caractere atribuído ao driver para iniciar a comunicação entre driver e biblioteca, sendo possível a transferência de dados do espaço de usuário para o espaço de núcleo, retornando erro caso o acesso ao dispositivo não se concretize. 
+ A primeira delas é a <i>open_driver()</i>. Seu objetivo é acessar o nó do dispositivo de caractere para iniciar a comunicação entre driver e biblioteca, sendo possível a transferência de dados do espaço de usuário para o espaço de núcleo, retornando erro caso o acesso ao dispositivo não se concretize. 
  
  <h4><b>Fechar driver:</b></h4>
  
- Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>. Ela é responsável por encerrar a comunicação com o nó do dispositivo de caractere atribuído ao driver, retornando erro caso isso não se concretize.
+ Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>. Ela é responsável por encerrar a comunicação com o nó do dispositivo de caractere, retornando erro caso isso não se concretize.
 
 <h4><b>Transferência de dados entre biblioteca e driver:</b></h4>
 
@@ -518,7 +518,7 @@ A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definiçã
 
 A solução abrangente deste projeto reflete sua total capacidade de atender a todos os requisitos especificados. O primeiro passo, é carregar o módulo kernel desenvolvido no Linux, afim da comunicação com os barramentos e sinais da GPU, ser possível.
 
-Uma vez carregado, o segundo passo é criar um nó do dispositivo de caractere para interagir com o módulo kernel carregado (driver de dispositivo), fazendo assim, a comunicação do espaço de usuário com o espaço de núcleo.
+Uma vez carregado, o segundo passo é criar um nó para o dispositivo de caractere, fazendo assim, a comunicação do espaço de usuário com o espaço de núcleo.
 
 A partir disso, a função de abertura da biblioteca deve ser chamada para iniciar a comunicação da biblioteca com o dispositivo devidamente criado.
 
@@ -656,7 +656,7 @@ Por fim, o desenvolvimento de uma imagem que utilize todos os elementos desenvol
 <h2> Execução do Projeto  </h2>
 <div align="justify">
 
-Para uso do driver e biblioteca, é necessário seguir os seguintes passos para obter o código-fonte, compilar o código em C, inserir o driver no kernel Linux, criar nó de acesso ao dispositivo de caractere e executá-lo em um dispositivo FPGA DE1-SoC acoplado com a GPU de Gabriel Sá Barreto Alves. Na criação do nó do dispositivo de caractere, é necessário ajustar o major number alocado dinamicamente ao driver pelo kernel. Ademais, também é preciso ajustar o caminho onde os arquivos gerados na compilação do módulo kernel serão armazenados.
+Para uso do driver e biblioteca, é necessário seguir os seguintes passos para obter o código-fonte, compilar o código em C, inserir o driver no kernel Linux, criar nó de acesso ao dispositivo de caractere e executá-lo em um dispositivo FPGA DE1-SoC acoplado com a GPU de Gabriel Sá Barreto Alves. Na criação do nó, é necessário ajustar o major number alocado dinamicamente ao driver pelo kernel. Ademais, também é preciso ajustar o caminho onde os arquivos gerados na compilação do módulo kernel serão armazenados.
 
 **Passo 1: Clonar o Repositório**
 
@@ -664,7 +664,7 @@ Abra o terminal e execute o seguinte comando para obter o código do repositóri
 
     git clone https://github.com/felipe-py/PBLSD_Barramentos.git
 
-**Passo 1.1: Ajustando major number do nó do dispositivo de caractere**
+**Passo 1.1: Ajustando major number do nó para dispositivo de caractere**
 
 Caso necessário, na regra "all" do arquivo Makefile, ajuste o major number correspondente ao alocado pelo kernel no momento do carregamento do driver no sistema. O major number corresponde ao "X" mostrado no comando abaixo:
 
@@ -678,7 +678,7 @@ Caso necessário, na variável "PWD" do arquivo Makefile, ajuste o caminho refer
 
 **Passo 2: Carregando e configurando driver**
 
-Para compilar, inserir o módulo kernel (driver) e criar um nó de dispositivo de caractere (arquivo especial), use o comando:
+Para compilar, inserir o módulo kernel (driver) e criar um nó para o dispositivo de caractere (arquivo especial), use o comando:
 
     make
 
@@ -690,7 +690,7 @@ Para obter código teste da biblioteca, compile e execute o código usando o com
 
 **Passo 4: Descarregando driver**
 
-Para apagar os arquivos gerados de compilação do módulo, remover o módulo do kernel e seu nó de dispositivo de caractere (arquivo especial), use o comando:
+Para apagar os arquivos gerados de compilação do módulo, remover o módulo do kernel e seu nó (arquivo especial), use o comando:
 
     make clean
 

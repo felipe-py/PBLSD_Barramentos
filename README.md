@@ -314,11 +314,11 @@ Adiante, serão descritas as operações presentes no driver e como elas funcion
 
 <h4><b>dev_init (Inicializa o módulo):</b></h4> 
 
-Aloca dinamicamente um número de dispositivo de caractere (major number), ou seja, permite que o kernel determine um número disponível no momento. Inicializa a estrutura “cdev”, responsável por associar as operações definidas no driver, e realiza o mapeamento com a ponte. Os ponteiros citados anteriormente, são associados a seus respectivos endereços mapeados, e se qualquer etapa falhar, mensagens de erro são exibidas e a inicialização é interrompida (caso contrário, uma mensagem de sucesso é exibida).
+Registra o dispositivo de caractere e aloca dinamicamente um número de dispositivo (major number) a ele, ou seja, permite que o kernel determine um número disponível no momento. Inicializa a estrutura “cdev”, responsável por associar as operações definidas no driver, e realiza o mapeamento com a ponte. Os ponteiros citados anteriormente, são associados a seus respectivos endereços mapeados, e se qualquer etapa falhar, mensagens de erro são exibidas e a inicialização é interrompida (caso contrário, uma mensagem de sucesso é exibida).
 	
 <h4><b>dev_exit (Encerra o módulo):</b></h4>
 
-O mapeamento da memória é desfeito, o registro do dispositivo de caractere é excluído e o número de dispositivo alocado é liberado Por fim uma mensagem indicando o encerramento do módulo é exibida.
+O mapeamento da memória é desfeito, o registro do dispositivo de caractere é excluído e o número de dispositivo alocado é liberado. Por fim, uma mensagem indicando o encerramento do módulo é exibida.
 
 <h4><b>dev_open (Abre o módulo):</b></h4>
 
@@ -368,7 +368,7 @@ Essas variáveis são números inteiros sem sinal de 32 bits que representam os 
 
 <h4><i>fd</i>:</h4>
 
-Essa variável representa um identificador único do arquivo do dispositivo de caractere do driver.
+Essa variável representa um identificador único do arquivo do nó de dispositivo de caractere do driver.
 
 <h4><i>buffer_user</i>:</h4>
 
@@ -382,11 +382,11 @@ Três funções são utlizadas para interligar a biblioteca ao driver. São elas
 
 <h4><b>Abertura do driver:</b></h4>
 
- A primeira delas é a <i>open_driver()</i>. Seu objetivo é acessar o dispositivo de caractere atribuído ao driver para iniciar a comunicação entre driver e biblioteca, sendo possível a transferência de dados do espaço de usuário para o espaço de núcleo, retornando erro caso o acesso ao dispositivo não se concretize. 
+ A primeira delas é a <i>open_driver()</i>. Seu objetivo é acessar o nó do dispositivo de caractere atribuído ao driver para iniciar a comunicação entre driver e biblioteca, sendo possível a transferência de dados do espaço de usuário para o espaço de núcleo, retornando erro caso o acesso ao dispositivo não se concretize. 
  
  <h4><b>Fechar driver:</b></h4>
  
- Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>. Ela é responsável por encerrar a comunicação com o dispositivo de caractere atribuído ao driver, retornando erro caso isso não se concretize.
+ Para finalizar a comunicação entre o driver e a biblioteca é utilizada a função <i>close_driver()</i>. Ela é responsável por encerrar a comunicação com o nó do dispositivo de caractere atribuído ao driver, retornando erro caso isso não se concretize.
 
 <h4><b>Transferência de dados entre biblioteca e driver:</b></h4>
 
@@ -397,7 +397,7 @@ Por fim, a função <i>preenche_buffer()</i> realiza a transferência dos dados 
 </p>
 <p align="center"><strong> Exemplo do buffer após formatações</strong></p>
 
-Após formatar e preencher o buffer da biblioteca com os dados a serem enviados para o driver, é chamada a função <i>write</i> que envia o descritor do dispositivo de caractere, o buffer da biblioteca e seu tamanho em bytes, retornando um valor diferente de 0, caso isso não se concretize.
+Após formatar e preencher o buffer da biblioteca com os dados a serem enviados para o driver, é chamada a função <i>write</i> que envia o descritor do nó do dispositivo de caractere, o buffer da biblioteca e seu tamanho em bytes, retornando um valor diferente de 0, caso isso não se concretize.
 
 <h3>Funções para utilização da GPU</h3>
 
@@ -518,15 +518,15 @@ A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definiçã
 
 A solução abrangente deste projeto reflete sua total capacidade de atender a todos os requisitos especificados. O primeiro passo, é carregar o módulo kernel desenvolvido no Linux, afim da comunicação com os barramentos e sinais da GPU, ser possível.
 
-Uma vez carregado, o segundo passo é criar um dispositivo de caractere para interagir com o módulo kernel carregado (driver de dispositivo), fazendo assim, a comunicação do espaço de usuário com o espaço de núcleo.
+Uma vez carregado, o segundo passo é criar um nó do dispositivo de caractere para interagir com o módulo kernel carregado (driver de dispositivo), fazendo assim, a comunicação do espaço de usuário com o espaço de núcleo.
 
-A partir disso, a função de abertura da biblioteca deve ser chamada para iniciar a comunicação da biblioteca com o dispositivo de caractere devidamente criado.
+A partir disso, a função de abertura da biblioteca deve ser chamada para iniciar a comunicação da biblioteca com o dispositivo devidamente criado.
 
 Com o êxito de todos esses passos, resta somente a utilização das funções disponíveis para uso na biblioteca. Com a utilização das mesmas, foi possível criar uma imagem que será detalhada na próxima seção.
 
-Após a utilização da biblioteca, é preciso chamar a função de encerramento, afim de finalizar a comunicação com o dispositivo de caractere.
+Após a utilização da biblioteca, é preciso chamar a função de encerramento, afim de finalizar a comunicação com o nó do dispositivo de caractere.
 
-Por se tratar de um módulo kernel, após a utilização do mesmo, é necessário descarregá-lo do kernel do Linux e excluir o dispositivo de caractere criado.
+Por se tratar de um módulo kernel, após a utilização do mesmo, é necessário descarregá-lo do kernel do Linux e excluir o nó criado.
 
 Para melhor compreensão da explicação, fornecemos o seguinte diagrama de fluxo detalhando os passos descritos na solução geral.
 
@@ -656,7 +656,7 @@ Por fim, o desenvolvimento de uma imagem que utilize todos os elementos desenvol
 <h2> Execução do Projeto  </h2>
 <div align="justify">
 
-Para uso do driver e biblioteca, é necessário seguir os seguintes passos para obter o código-fonte, compilar o código em C, inserir o driver no kernel Linux, criar o dispositivo de caractere e executá-lo em um dispositivo FPGA DE1-SoC acoplado com a GPU de Gabriel Sá Barreto Alves. Na criação do dispositivo de caractere, é necessário ajustar o major number alocado dinamicamente ao driver pelo kernel. Ademais, também é preciso ajustar o caminho onde os arquivos gerados na compilação do módulo kernel serão armazenados.
+Para uso do driver e biblioteca, é necessário seguir os seguintes passos para obter o código-fonte, compilar o código em C, inserir o driver no kernel Linux, criar nó de acesso ao dispositivo de caractere e executá-lo em um dispositivo FPGA DE1-SoC acoplado com a GPU de Gabriel Sá Barreto Alves. Na criação do nó do dispositivo de caractere, é necessário ajustar o major number alocado dinamicamente ao driver pelo kernel. Ademais, também é preciso ajustar o caminho onde os arquivos gerados na compilação do módulo kernel serão armazenados.
 
 **Passo 1: Clonar o Repositório**
 
@@ -664,7 +664,7 @@ Abra o terminal e execute o seguinte comando para obter o código do repositóri
 
     git clone https://github.com/felipe-py/PBLSD_Barramentos.git
 
-**Passo 1.1: Ajustando major number do dispositivo de caractere**
+**Passo 1.1: Ajustando major number do nó do dispositivo de caractere**
 
 Caso necessário, na regra "all" do arquivo Makefile, ajuste o major number correspondente ao alocado pelo kernel no momento do carregamento do driver no sistema. O major number corresponde ao "X" mostrado no comando abaixo:
 

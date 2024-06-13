@@ -178,7 +178,7 @@ Os módulos presentes nessa GPU, além do decodificador de instrução (cuja fun
 
 1. Banco de Registradores: armazena temporariamente as informações (coordenadas, offset de memória, e um bit de ativação) associadas a cada elemento, 32 ao total, 1 para background e 31 para sprites.
 
-1. Módulo de Desenho: reponsável por gerenciar o processo de desenho dos pixels no monitor VGA.
+1. Módulo de Desenho: responsável por gerenciar o processo de desenho dos pixels no monitor VGA.
 
 1. Controlador VGA: responsável por gerar os sinais de sincronização (v sync e h sync) da VGA, além de fornecer as coordenadas x e y do processo de varredura do monitor.
 

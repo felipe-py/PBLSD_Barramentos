@@ -531,7 +531,7 @@ Por se tratar de um módulo kernel, após a utilização do mesmo, é necessári
 Para melhor compreensão da explicação, fornecemos o seguinte diagrama de fluxo detalhando os passos descritos na solução geral.
 
 <p align="center">
-  <img src="Imagens/Fluxograma1.png" width = "500" />
+  <img src="Imagens/Fluxograma2.png" width = "500" />
 </p>
 <p align="center"><strong> Fluxograma da solução geral do problema</strong></p>
 

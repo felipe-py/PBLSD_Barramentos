@@ -5,7 +5,7 @@
 <div id="sobre-o-projeto"> 
 <h2> Sobre o Projeto</h2>
 
-O discente Gabriel de Sá Barreto da Universidade Estadual de Feira de Santana (UEFS), desenvolveu em suas atividades de iniciação científica e trabalho de conclusão de curso, um processador gráfico que permite o desenho, movimentação e controle de sprites e polígonos convexos (quadrados e triângulos) em um monitor VGA de resolução 680x480 pixels.
+O discente Gabriel de Sá Barreto da Universidade Estadual de Feira de Santana (UEFS), desenvolveu em suas atividades de iniciação científica e trabalho de conclusão de curso um processador gráfico que permite o desenho de dois tipos de polígonos convexos (quadrados e triângulos), além de uma determinada quantidade de sprites. Além disso é possível controlar e mover elementos exibidos em um monitor VGA de resolução 680x480 pixels.
 
 Em seu projeto, Gabriel utilizou a plataforma NIOS II para processamento das instruções recebidas, onde a mesma, foi embarcada na mesma FPGA em que estava o processador gráfico. Entretanto, na plataforma de desenvolvimento DE1-SOC, a NIOS II não é necessária devido a presença do processador ARM (HPS). Isto no entanto gera um problema: não existe comunicação entre o processador gráfico implementado na FPGA e o HPS.
 
@@ -178,7 +178,7 @@ Os módulos presentes nessa GPU, além do decodificador de instrução (cuja fun
 
 1. Banco de Registradores: armazena temporariamente as informações (coordenadas, offset de memória, e um bit de ativação) associadas a cada elemento, 32 ao total, 1 para background e 31 para sprites.
 
-1. Módulo de Desenho: reponsável por gerenciar o processo de desenho dos pixels no monitor VGA.
+1. Módulo de Desenho: responsável por gerenciar o processo de desenho dos pixels no monitor VGA.
 
 1. Controlador VGA: responsável por gerar os sinais de sincronização (v sync e h sync) da VGA, além de fornecer as coordenadas x e y do processo de varredura do monitor.
 

@@ -12,6 +12,20 @@ static int fd;                      /* Descritor */
 
 static char buffer_user[21];        /* Buffer do usuário para enviar ao Driver */
 
+static int blocos_editados_x[4802];     /* Guarda blocos_x editados */
+
+static int blocos_editados_y[4802];     /* Guarda blocos_y editados */
+
+static int registrador_poligonos_setados[18];       /* Armazena registradores usados */
+
+static int registrador_sprites_setados[33];       /* Armazena registradores usados */
+
+static int qtd_blocos_editados = 0;     /* Quantidade de blocos editados */
+
+static int qtd_sprites_setados = 0;     /* Quantidade de sprites editados */
+
+static int qtd_poligonos_setados = 0;       /* Quantidade de poligonos editados */
+
 /**Função para inicializar comunicação com o driver
  * retorno ->       Retorna 0 caso comunicação seja iniciada ou -1 caso dê erro
  */
@@ -101,6 +115,19 @@ set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registr
         return -1;
     }
 
+    /* Verifica se registrador já foi utilzado */
+    if(qtd_sprites_setados != 0) {
+        for(int i = 0; i < qtd_sprites_setados; ++i) {
+            if(registrador_sprites_setados[i] == registrador) {
+                return 0;
+            }
+        }
+    }
+
+    /* Se não foi, armazena registrador utilizado e contabiliza */
+    registrador_sprites_setados[qtd_sprites_setados] = registrador;
+    qtd_sprites_setados++;
+
     return 0;
 }
 
@@ -137,6 +164,20 @@ edit_bloco_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int ver
         fprintf(stderr, ERRO_EDIT_BLOCO_BACKGROUND"Falha na escrita\n");
         return -1;
     }
+
+    /* Verifica se bloco x e y já foram utilzados */
+    if(qtd_blocos_editados != 0) {
+        for(int i = 0; i < qtd_blocos_editados; ++i) {
+            if(blocos_editados_x[i] == bloco_x && blocos_editados_y[i] == bloco_y) {
+                return 0;
+            }
+        }
+    }
+
+    /* Se não foi, armazena blocos x e y utilizados e contabiliza */
+    blocos_editados_x[qtd_blocos_editados] = bloco_x;
+    blocos_editados_y[qtd_blocos_editados] = bloco_y;
+    qtd_blocos_editados++;
 
     return 0;
 }
@@ -249,6 +290,19 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
         return -1;
     }
 
+    /* Verifica se registrador já foi utilzado */
+    if(qtd_poligonos_setados != 0) {
+        for(int i = 0; i < qtd_poligonos_setados; ++i) {
+            if(registrador_poligonos_setados[i] == ordem_impressao) {
+                return 0;
+            }
+        }
+    }
+
+    /* Se não foi, armazena registrador utilizado e contabiliza */
+    registrador_poligonos_setados[qtd_poligonos_setados] = ordem_impressao;
+    qtd_poligonos_setados++;
+
     return 0;
 }
 
@@ -295,6 +349,19 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
         return -1;
     }
 
+    /* Verifica se registrador já foi utilzado */
+    if(qtd_poligonos_setados != 0) {
+        for(int i = 0; i < qtd_poligonos_setados; ++i) {
+            if(registrador_poligonos_setados[i] == ordem_impressao) {
+                return 0;
+            }
+        }
+    }
+
+    /* Se não foi, armazena registrador utilizado e contabiliza */
+    registrador_poligonos_setados[qtd_poligonos_setados] = ordem_impressao;
+    qtd_poligonos_setados++;
+
     return 0;
 }
 
@@ -303,40 +370,36 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
  */
 int 
 limpar_tela() {
-    size_t i, j;
+    size_t i;
 
     /* Remove cor do background */
     set_cor_background_wbr(0, 0, 0);
 
-    /* Remove blocos editados do background */
-    for (i = 0; i < 80; ++i) {
-        for (j = 0; j < 60; ++j) {
-            if (desabilita_bloco_background_wbm(i, j) == -1) {
-                break;
-            }
+    /* Remove apenas blocos editados do background */
+    for (i = 0; i < qtd_blocos_editados; ++i) {
+        if (desabilita_bloco_background_wbm(blocos_editados_x[i], blocos_editados_y[i]) == -1) {
+            break;
         }
     }
 
-    /* Remove sprites */
-    for (i = 1; i < 32; ++i) {
-        if (set_sprite_wbr(0, 0, 0, 0, i) == -1) {
+    /* Remove apenas Sprites utilizados */
+    for (i = 0; i < qtd_sprites_setados; ++i) {
+        if (set_sprite_wbr(0, 0, 0, 0, registrador_sprites_setados[i]) == -1) {
             break; 
         }
     }
 
-    /* Remove Quadrados */
-    for (i = 0; i < 16; ++i) {
-        if (set_quadrado_dp(0, 0, 0, 0, 0, 0, i) == -1) {
+    /* Remove apenas Poligonos utilizados */
+    for (i = 0; i < qtd_poligonos_setados; ++i) {
+        if (set_quadrado_dp(0, 0, 0, 0, 0, 0, registrador_poligonos_setados[i]) == -1 || set_triangulo_dp(0, 0, 0, 0, 0, 0, registrador_poligonos_setados[i]) == -1) {
             break; 
         }
     }
 
-    /* Remove Triângulos */
-    for (i = 0; i < 16; ++i) {
-        if (set_triangulo_dp(0, 0, 0, 0, 0, 0, i) == -1) {
-            break; 
-        }
-    }
+    /* Zera contadores de elementos utilizados */
+    qtd_blocos_editados = 0;
+    qtd_poligonos_setados = 0;
+    qtd_sprites_setados = 0;
 
     return 0;
 }

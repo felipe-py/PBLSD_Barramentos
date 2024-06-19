@@ -12,19 +12,19 @@ static int fd;                      /* Descritor */
 
 static char buffer_user[21];        /* Buffer do usuário para enviar ao Driver */
 
-static int blocos_editados_x[4802];     /* Guarda blocos_x editados */
+static int blocos_editados_x[4802];     /* Armazena blocos_x editados */
 
-static int blocos_editados_y[4802];     /* Guarda blocos_y editados */
+static int blocos_editados_y[4802];     /* Armazena blocos_y editados */
 
-static int registrador_poligonos_setados[18];       /* Armazena registradores usados */
+static int registrador_poligonos_setados[18];       /* Armazena registradores dos Poligonos usados */
 
-static int registrador_sprites_setados[33];       /* Armazena registradores usados */
+static int registrador_sprites_setados[33];       /* Armazena registradores dos Sprites usados */
 
-static int qtd_blocos_editados = 0;     /* Quantidade de blocos editados */
+static int qtd_blocos_editados = 0;     /* Quantidade de Blocos editados */
 
-static int qtd_sprites_setados = 0;     /* Quantidade de sprites editados */
+static int qtd_sprites_setados = 0;     /* Quantidade de Sprites editados */
 
-static int qtd_poligonos_setados = 0;       /* Quantidade de poligonos editados */
+static int qtd_poligonos_setados = 0;       /* Quantidade de Poligonos editados */
 
 /**Função para inicializar comunicação com o driver
  * retorno ->       Retorna 0 caso comunicação seja iniciada ou -1 caso dê erro
@@ -391,7 +391,7 @@ limpar_tela() {
 
     /* Remove apenas Poligonos utilizados */
     for (i = 0; i < qtd_poligonos_setados; ++i) {
-        if (set_quadrado_dp(0, 0, 0, 0, 0, 0, registrador_poligonos_setados[i]) == -1 || set_triangulo_dp(0, 0, 0, 0, 0, 0, registrador_poligonos_setados[i]) == -1) {
+        if (set_quadrado_dp(0, 0, 0, 0, 0, 0, registrador_poligonos_setados[i]) == -1) {
             break; 
         }
     }

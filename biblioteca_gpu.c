@@ -96,6 +96,8 @@ set_cor_background_wbr(int azul, int verde, int vermelho) {
  */
 int 
 set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registrador) {
+    size_t i;
+    
     /* Verificações de dados recebidos */
     if (ativa_sprite > 1 || cord_x > 639 || cord_y > 479 || offset > 31 || registrador > 31) {
         fprintf(stderr, ERRO_SET_SPRITE"Valor acima do permitido\n");
@@ -117,7 +119,7 @@ set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registr
 
     /* Verifica se registrador já foi utilzado */
     if(qtd_sprites_setados != 0) {
-        for(int i = 0; i < qtd_sprites_setados; ++i) {
+        for(i = 0; i < qtd_sprites_setados; ++i) {
             if(registrador_sprites_setados[i] == registrador) {
                 return 0;
             }
@@ -142,6 +144,7 @@ set_sprite_wbr(int ativa_sprite, int cord_x, int cord_y, int offset, int registr
  */
 int 
 edit_bloco_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int vermelho) {
+    size_t i;
     int bloco;
 
     bloco = bloco_y * 80 + bloco_x;     /* Multiplica linha recebida pelo total de colunas (80) e soma à coluna recebida */
@@ -167,7 +170,7 @@ edit_bloco_background_wbm(int bloco_x, int bloco_y, int azul, int verde, int ver
 
     /* Verifica se bloco x e y já foram utilzados */
     if(qtd_blocos_editados != 0) {
-        for(int i = 0; i < qtd_blocos_editados; ++i) {
+        for(i = 0; i < qtd_blocos_editados; ++i) {
             if(blocos_editados_x[i] == bloco_x && blocos_editados_y[i] == bloco_y) {
                 return 0;
             }
@@ -261,7 +264,7 @@ edit_sprite_wsm(int endereco, int azul, int verde, int vermelho) {
  */
 int 
 set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) { 
-    size_t limite;
+    size_t limite, i;
 
     /* Verifica se coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido */
     limite = 5 * (tamanho - 1) + 9;
@@ -292,7 +295,7 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
 
     /* Verifica se registrador já foi utilzado */
     if(qtd_poligonos_setados != 0) {
-        for(int i = 0; i < qtd_poligonos_setados; ++i) {
+        for(i = 0; i < qtd_poligonos_setados; ++i) {
             if(registrador_poligonos_setados[i] == ordem_impressao) {
                 return 0;
             }
@@ -320,7 +323,7 @@ set_quadrado_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int r
  */
 int 
 set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int ref_y, int ordem_impressao) {
-    size_t limite;
+    size_t limite, i;
 
     /* Verifica se coordenadas x e y estão dentro do limite da tela permitido a depender do tamanho escolhido */
     limite = 5 * (tamanho - 1) + 9;
@@ -351,7 +354,7 @@ set_triangulo_dp(int azul, int verde, int vermelho, int tamanho, int ref_x, int 
 
     /* Verifica se registrador já foi utilzado */
     if(qtd_poligonos_setados != 0) {
-        for(int i = 0; i < qtd_poligonos_setados; ++i) {
+        for(i = 0; i < qtd_poligonos_setados; ++i) {
             if(registrador_poligonos_setados[i] == ordem_impressao) {
                 return 0;
             }

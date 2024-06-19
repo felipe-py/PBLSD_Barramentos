@@ -500,7 +500,9 @@ A GPU também consegue realizar a renderização de triângulos. A função cria
 
 Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela atribui a cor nula ao background para apagá-lo, além de desabilitar, utilizando de loops, todos os sprites e polígonos renderizados. O loop passa por cada registrador para desativar os sprites e por cada posição na memória de instrução para desabilitar os polígonos, definindo seus tamanhos como 0. 
 
-Para apagar os blocos editados do background, dois laços aninhados percorrem de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente, desabilitando todos os 4800 blocos.
+Para apagar os blocos editados do background, um loop percorre de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente, desabilitando apenas os blocos editados.
+
+Visando a otimização e performance da GPU, essa função só desabilita e apaga os elementos renderizados em tela. Por exemplo, não é necessário passar pelas 4800 posições de memória dos blocos do background, apenas as posições usadas para editar os blocos utilizados.
 
 <h4><b>Visualizando as funções</b></h4>
 

@@ -34,11 +34,10 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
         </a></li>
         <li><a href="#Perifericos-utilizados"> Periféricos da Placa DE1-SoC Utilizados </a></li>
         <li><a href="#Arquitetura GPU"> Arquitetura da GPU</a></li>
+        <li><a href="#solucao-geral"> Solução Geral do projeto </a></li>
         <li><a href="#Driver uso GPU"> Driver para comunicação com a GPU </a></li>
-	      <li><a href="#Biblioteca uso GPU"> Biblioteca para uso da GPU </a></li>
-        <li><a href="#solucao-geral"> Solução Geral do projeto </a></li>  
+	      <li><a href="#Biblioteca uso GPU"> Biblioteca para uso da GPU </a></li>  
         <li><a href="#testes"> Testes</a></li>
-        <li><a href="#conclusao"> Conclusão </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
         <li><a href="#referencias"> Referências </a></li>
 	</ul>	
@@ -195,14 +194,14 @@ Os módulos presentes nessa GPU, além do decodificador de instrução (cuja fun
 <h4><b>Escrita no Banco de Registradores (WBR):</b></h4> 
 
 Essa instrução é responsável por configurar os registradores que armazenam as informações dos sprites e a cor base do background. O *opcode* dessa função é 0000.
-A primeira forma dessa instrução se dá quando queremos mudar a cor de background, e usa um *opcode* (4 bits) para identificar a operação, o registrador (5 bits, para representar 32 possíveis registradores) que irá guardar a informação da cor do background e em seguida a sequência que indica a cor do background em RGB (9 bits, 3 para codificar cada cor RGB).
+A primeira forma dessa instrução é exibida abaixo, onde sua função é mudar a cor do background.
 
 <p align="center">
   <img src="Imagens/instrucao_WBR.png" width = "600" />
 </p>
 <p align="center"><strong> Formato instrução WBR (1)</strong></p>
 
-A segunda forma da instrução se dá quando queremos manipular algum sprite, continua usando um *opcode*, e um campo de registrador, mas em seguida é passado um *offset* (9 bits) que dará o endereço de memória do sprite a ser configurado, em seguida temos as coordenadas em que o sprite será posto em X e Y (10 bits para cada um, para poder representar o limite de resolução 640x480), e por fim um bit *sp*, para habilitar/desabilitar o desenho do sprite na tela.
+A segunda forma da instrução é exibida abaixo e se dá quando queremos manipular algum sprite em tela.
 
 <p align="center">
   <img src="Imagens/instrucao_WBR2.png" width = "600" />
@@ -213,7 +212,6 @@ A segunda forma da instrução se dá quando queremos manipular algum sprite, co
 <h4><b>Escrita na Memória de Sprites (WSM):</b></h4> 
 
 Essa instrução armazena ou modifica o conteúdo presente na Memória de Sprites. O *opcode* dessa função é 0001.
-Essa instrução, além do *opcode* (4 bits), possui um campo para inserção do endereço de memória (14 bits, para representar todos so endereços da memória de sprites) seguido por outro campo para os novos valores de cor (9 bits, 3 para cada cor RGB).
 
 <p align="center">
   <img src="Imagens/instrucao_WSM.png" width = "600" />
@@ -224,12 +222,11 @@ Essa instrução, além do *opcode* (4 bits), possui um campo para inserção do
 <h4><b>Escrita na Memória de Background (WBM):</b></h4> 
 
 Essa instrução armazena ou modifica o conteúdo presente na Memória de Background. Sua função é configurar valores RGB para o preenchimento de áreas do background. O <i>opcode</i> dessa função é 0010.
-Similar a WSM, diferenciado-se apenas na quantidade de bits do campo <i>endereço de memória</i>, que apesar de constar 12 bits no documento da GPU, foi comprovado que possui pelo menos um bit a mais, visto que com 12 bits só seria possível editar 4096 endereços da memória de background e através de testes, foi possível alterar 4800 endereços. O background é dividido em 4800 blocos onde cada endereço na memória de background, corresponde a um bloco. Se um endereço recebe o valor 510, o Módulo de Desenho desabilita o bloco.
+Similar a WSM, diferenciado-se apenas na quantidade de bits do campo <i>endereço de memória</i>, que apesar de constar 12 bits no documento da GPU, foi comprovado que possui pelo menos um bit a mais, visto que com 12 bits só seria possível editar 4096 endereços da memória de background e através de testes, foi possível alterar 4800 endereços. O background é dividido em 4800 blocos onde cada endereço na memória de background, corresponde a um bloco.
 
 <h4><b>Definição de um Polígono (DP):</b></h4> 
 
 Essa instrução é utilizada para modificar o conteúdo da Memória de Instrução do Co-Processador, de forma a definir os dados referentes a um polígono que deve ser renderizado. O *opcode* dessa função é 0011.
-O campo endereço indica a posição de memória em que a instrução será armazenada (4 bits), em seguida são passadas as coordenadas do ponto de referência para o polígono (9 bits cada), em seguida pelo tamanho do polígono (4 bits, ver a tabela), com a cor do polígono em RGB (9 bits, 3 para cada cor) e o bit de forma que indica se tratar de um quadrado (0), ou triângulo (1).
 
 <p align="center">
   <img src="Imagens/instrucao_DP.png" width = "600" />
@@ -251,6 +248,29 @@ Com as instruções já devidamente alocadas em seus respectivos barramentos é 
 
 </div>
 </div>
+
+<div id="solucao-geral"> 
+<h2> Solução Geral do projeto </h2>
+<div align="justify">
+
+A solução abrangente deste projeto reflete sua total capacidade de atender a todos os requisitos especificados. O primeiro passo, é carregar o módulo kernel desenvolvido no Linux, afim da comunicação com os barramentos e sinais da GPU, ser possível.
+
+Uma vez carregado, o segundo passo é criar um nó para o dispositivo de caractere, fazendo assim, a comunicação do espaço de usuário com o espaço de núcleo.
+
+A partir disso, a função de abertura da biblioteca deve ser chamada para iniciar a comunicação da biblioteca com o dispositivo devidamente criado.
+
+Com o êxito de todos esses passos, resta somente a utilização das funções disponíveis para uso na biblioteca. Com a utilização das mesmas, foi possível criar uma imagem que será detalhada no fim do documento.
+
+Após a utilização da biblioteca, é preciso chamar a função de encerramento, afim de finalizar a comunicação com o nó do dispositivo de caractere.
+
+Por se tratar de um módulo kernel, após a utilização do mesmo, é necessário descarregá-lo do kernel do Linux e excluir o nó criado.
+
+Para melhor compreensão do processo, fornecemos o seguinte diagrama de fluxo detalhando os passos descritos na solução geral.
+
+<p align="center">
+  <img src="Imagens/Fluxograma2.png" width = "500" />
+</p>
+<p align="center"><strong> Fluxograma da solução geral do problema</strong></p>
 
 <div id="Driver uso GPU"> 
 <h2> Driver para comunicação com a GPU</h2>
@@ -347,7 +367,7 @@ Por exemplo, '9' - '0' = 57 - 48 = 9.
 
 Ademais, um sinal é enviado indicando que as instruções enviadas devem ser escritas nas FIFO’s. Se qualquer etapa falhar, uma mensagem de erro é exibida, caso contrário uma mensagem de sucesso é exibida.
 
-É importante salientar que é utilizado uma verificação usando o sinal *wrfull*, para verificar se as FIFO’s alcançaram o limite máximo de instruções armazenadas. Ela conta com um loop que dura até que as FIFO’s liberem espaço para receber novas instruções. Desta forma, instruções a serem enviadas não saõ “perdidas”.
+É importante salientar que é utilizado uma verificação usando o sinal *wrfull*, para verificar se as FIFO’s alcançaram o limite máximo de instruções armazenadas. Ela conta com um loop que dura até que as FIFO’s liberem espaço para receber novas instruções. Desta forma, instruções a serem enviadas não são “perdidas”.
 
 </div>
 </div>
@@ -360,7 +380,7 @@ Nesta seção, explicaremos todas as funções implementadas em uma biblioteca e
 
 <h3>Variáveis globais</h3>
 
-Quatro variáveis são criadas para serem utilizadas entre as funções presentes na biblioteca. São elas:
+Quatro variáveis principais são criadas para serem utilizadas entre as funções presentes na biblioteca. São elas:
 
 <h4><i>data_a</i> e <i>data_b</i>:</h4>
 
@@ -376,6 +396,8 @@ Essa variável representa o buffer da biblioteca, onde serão guardados os dados
 
 Assim, as posições 0 a 9 desse buffer, irão conter os 10 dígitos de um número inteiro sem sinal para o barramento b e as posições 10 a 19 irão conter os 10 dígitos de um número inteiro sem sinal para o barramento a. É definido o tamanho de 21 para evitar possíveis estouros de array.
 
+Ademais, também são criados vetores e variáveis para armazenar e ter controle sobre os elementos utilizados da GPU, como registradores dos sprites, registradores do polígonos e etc. Dessa forma, a remoção dos elementos da tela é otimizada, dispensando a necessidade de acessos desnecessários a registradores e endereços de memórias não utilizados. 
+
 <h3>Funções para comunicação com o driver</h3>
 
 Três funções são utlizadas para interligar a biblioteca ao driver. São elas:
@@ -390,7 +412,7 @@ Três funções são utlizadas para interligar a biblioteca ao driver. São elas
 
 <h4><b>Transferência de dados entre biblioteca e driver:</b></h4>
 
-Por fim, a função <i>preenche_buffer()</i> realiza a transferência dos dados do buffer da biblioteca para o buffer do driver. A função converte e transforma em caracteres char, os números inteiros sem sinal de 32 bits das variáveis globais <i>data_a</i> e <i>data_b</i>. Caso o número armazenado seja menor que 10 dígitos, a função adiciona zeros a frente do número afim de completar os 10 caracteres por barramento. Segue imagem exemplificando como ficaria o buffer após essas operações.
+Por fim, a função <i>preenche_buffer()</i> realiza a transferência dos dados do buffer da biblioteca para o buffer do driver. A função converte e transforma em caracteres char, os números inteiros sem sinal de 32 bits das variáveis globais <i>data_a</i> e <i>data_b</i>. Caso o número armazenado seja menor que 10 dígitos, a função adiciona zeros a frente do número afim de completar os 10 caracteres por barramento. Segue imagem exemplificando como ficaria o buffer após essas operações. Ps: O espaço vazio dentro do vetor não existe no contexto do projeto, foi usado para melhor visualização da lógica implementada.
 
 <p align="center">
   <img src="Imagens/ExemploBufferFormatado.png" width = "400" />
@@ -417,7 +439,7 @@ Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atua
 
 <h4><b>Exibir sprites na tela:</b></h4>
 
-A função <i>set_sprite_wbr()</i> recebe como parâmetro o bit de ativação do sprite, as coordenadas x e y onde deve ser exibido o sprite em tela, o sprite a ser exibido e o registrador em que ele será armazenado, todos esses em sua representação decimal. Verificações são feitas para assegurar que o código de ativação do sprite seja igual a 0 ou 1 e que sua localização na tela respeite os limites suportados pela GPU, que vão de 0 a 639 para x e de 0 a 479 para y. 
+A função <i>set_sprite_wbr()</i> recebe como parâmetro o bit de ativação do sprite, as coordenadas x e y onde deve ser exibido o sprite em tela, o sprite a ser exibido (offset) e o registrador em que ele será armazenado, todos esses em sua representação decimal. Verificações são feitas para assegurar que o código de ativação do sprite seja igual a 0 ou 1 e que sua localização na tela respeite os limites suportados pela GPU, que vão de 0 a 639 para x e de 0 a 479 para y. 
 
 É verificado também se o valor que representa o sprite escolhido e o registrador que armazenará ele está dentro do intervalo de 0 a 31 e 1 a 31, respectivamente, representando a quantidade total de sprites e registradores disponíveis para armazenamento.
 
@@ -429,7 +451,7 @@ O <i>data_b</i> recebe o restante dos parâmetros recebidos pela função.
 
 Por fim é chamada a função <i>preenche_buffer()</i> para enviar os dados atualizados ao driver.
 
-A seguir, a exibição da sequência de sprites atuais armazenados na memória de dados da GPU, na ordem de visualização da esquerda para a direita, e de cima para baixo. O primeiro sprite é representado por 0 e o último por 24.
+A seguir, a exibição da sequência de sprites atuais armazenados na memória de dados da GPU, na ordem de visualização da esquerda para a direita, e de cima para baixo. O primeiro sprite é representado por *offset* igual a 0 e o último por 24.
 
 <p align="center">
   <img src="Imagens/sprites_gpu.png" width = "400" />
@@ -498,7 +520,7 @@ A GPU também consegue realizar a renderização de triângulos. A função cria
 
 <h4><b>Limpar a tela:</b></h4>
 
-Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela atribui a cor nula ao background para apagá-lo, além de desabilitar, utilizando de loops, todos os sprites e polígonos renderizados. O loop passa por cada registrador para desativar os sprites e por cada posição na memória de instrução para desabilitar os polígonos, definindo seus tamanhos como 0. 
+Uma função foi criada para apagar todos os elementos renderizados pela GPU em uma tela de uma só vez, chamada <i>limpar_tela()</i>. Automaticamente ela atribui a cor nula ao background para apagá-lo, além de desabilitar, utilizando de loops, apenas os sprites e polígonos renderizados. O loop passa por cada registrador para desativar os sprites e por cada posição na memória de instrução para desabilitar os polígonos, definindo seus tamanhos como 0. 
 
 Para apagar os blocos editados do background, um loop percorre de forma respectiva as linhas e colunas da tela chamando a função <i>desabilita_bloco_background_wbm()</i> explicada anteriomente, desabilitando apenas os blocos editados.
 
@@ -516,32 +538,6 @@ A seguir, é apresentada a imagem do arquivo de cabeçalho contendo a definiçã
 </div>
 </div>
 
-<div id="solucao-geral"> 
-<h2> Solução Geral do projeto </h2>
-<div align="justify">
-
-A solução abrangente deste projeto reflete sua total capacidade de atender a todos os requisitos especificados. O primeiro passo, é carregar o módulo kernel desenvolvido no Linux, afim da comunicação com os barramentos e sinais da GPU, ser possível.
-
-Uma vez carregado, o segundo passo é criar um nó para o dispositivo de caractere, fazendo assim, a comunicação do espaço de usuário com o espaço de núcleo.
-
-A partir disso, a função de abertura da biblioteca deve ser chamada para iniciar a comunicação da biblioteca com o dispositivo devidamente criado.
-
-Com o êxito de todos esses passos, resta somente a utilização das funções disponíveis para uso na biblioteca. Com a utilização das mesmas, foi possível criar uma imagem que será detalhada na próxima seção.
-
-Após a utilização da biblioteca, é preciso chamar a função de encerramento, afim de finalizar a comunicação com o nó do dispositivo de caractere.
-
-Por se tratar de um módulo kernel, após a utilização do mesmo, é necessário descarregá-lo do kernel do Linux e excluir o nó criado.
-
-Para melhor compreensão da explicação, fornecemos o seguinte diagrama de fluxo detalhando os passos descritos na solução geral.
-
-<p align="center">
-  <img src="Imagens/Fluxograma2.png" width = "500" />
-</p>
-<p align="center"><strong> Fluxograma da solução geral do problema</strong></p>
-
-</div>
-</div>
-
 <div id="testes"> 
 <h2> Testes </h2>
 <div align="justify">
@@ -552,21 +548,21 @@ A seguir, a descrição dos testes realizados para garantir o adequado funcionam
 
 Afim de garantir o correto carregamento e descarregamento no kernel do Linux do driver desenvolvido, além de algumas outras operações, foram realizados alguns testes descritos a seguir.
 
-* Inicializando o módulo kernel.
+* Inicializando o módulo kernel através do comando "make" do arquivo Makefile. O módulo é compilado, inserido no kernel do Linux em tempo de execução e um nó para o dispositivo de caractere é criado. Mensagem de sucesso da inclusão do módulo é exibida. 
 
 <p align="center">
   <img src="Gifs/CarregaDriver.gif" width = "400" />
 </p>
 <p align="center"><strong>Carregando o módulo kernel no Linux</strong></p>
 
-* Removendo o módulo kernel.
+* Removendo o módulo kernel através do comando "make clean" do arquivo Makefile. Os arquivos gerados na compilação do módulo kernel são excluídos, o módulo é removido do kernel do Linux e o nó para o dispositivo de caractere é excluído. Mensagem de sucesso da exclusão do módulo é exibida.
 
 <p align="center">
   <img src="Gifs/DescarregaDriver.gif" width = "400" />
 </p>
 <p align="center"><strong>Descarregando o módulo kernel do Linux</strong></p>
 
-* Abrindo e fechando comunicação com o dispositivo de caractere.
+* Abrindo e fechando comunicação com o dispositivo de caractere. Abre e fecha biblioteca utilizando os comandos *open_driver()* e *close_driver()*. Mensagem de sucesso da operação é exibida.
 
 <p align="center">
   <img src="Gifs/AbrindoFechando.gif" width = "400" />
@@ -582,76 +578,67 @@ Para teste das funções da biblioteca projetada em C, além de verificar sua co
 </p>
 <p align="center"><strong>Imagem Final</strong></p>
 
-* Céu (azul claro) -> <i>set_cor_background_wbr</i> 1x
+* Céu (azul claro) -> <i>set_cor_background_wbr (azul = 6, verde = 4, vermelho = 3)</i>. Utilizado 1x.
 
-* Sol (amarelo) -> <i>set_quadrado_dp</i> e <i>set_triangulo_dp</i> 1x cada
+* Sol (amarelo) -> <i>set_quadrado_dp (azul = 0, verde = 6, vermelho = 6, tamanho = 6, ref_x = 511, ref_y = 60, ordem_impressao = 0)</i> e <i>set_triangulo_dp (azul = 0, verde = 6, vermelho = 6, tamanho = 7, ref_x = 511, ref_y = 53, ordem_impressao = 1)</i>. Utilizados 1x cada.
 
-* Nuvens (branco) -> <i>edit_bloco_background_wbm</i> 31x
+* Nuvens (branco) -> <i>edit_bloco_background_wbm (bloco_x, bloco_y, azul = 7, verde = 7, vermelho = 7)</i>. Utilizado 31x.
 
-* Gramas (verde) -> <i>edit_bloco_background_wbm</i> 16x
+* Gramas (verde) -> <i>edit_bloco_background_wbm (bloco_x, bloco_y, azul = 0, verde = 7, vermelho = 0)</i>. Utilizado 16x.
 
-* Troncos 1 e 2 (azulado) -> <i>set_sprite_wbr</i> 2x
+* Troncos 1 e 2 (azulado) -> <i>set_sprite_wbr (ativa_sprite = 1, cord_x = 140/471, cord_y = 463, offset = 16, registrador = 7/6)</i>. Utilizado 2x.
 
-* Árvores 1 e 2 (vermelha) -> <i>set_sprite_wbr</i> 2x
+* Árvores 1 e 2 (vermelha) -> <i>set_sprite_wbr (ativa_sprite = 1, cord_x = 100/511, cord_y = 461, offset = 4, registrador = 4/5)</i>. Utilizado 2x.
 
-* Aliens 1 e 2 (branco e vermelho) -> <i>set_sprite_wbr</i> 2x
+* Aliens 1 e 2 (branco e vermelho) -> <i>set_sprite_wbr (ativa_sprite = 1, cord_x = 352/272, cord_y = 355, offset = 22, registrador = 2/3)</i>. Utilizado 2x.
 
-* Maçaneta (barra azul) -> <i>set_sprite_wbr</i> 1x
+* Maçaneta (barra azul) -> <i>set_sprite_wbr (ativa_sprite = 1, cord_x = 320, cord_y = 445, offset = 11, registrador = 1)</i>. Utilizado 1x.
 
-* Teto da casa (marrom) -> <i>set_triangulo_dp</i> 6x
+* Teto da casa (marrom) -> <i>set_triangulo_dp (azul = 1, verde = 2, vermelho = 4, tamanho = 3, ref_x = 245/275/305/335/365/395, ref_y = 299, ordem_impressao = 6/7/8/9/10/11)</i>. Utilizado 6x.
 
-* Porta da casa (marrom) -> <i>set_quadrado_dp</i> 2x
+* Porta da casa (marrom) -> <i>set_quadrado_dp (azul = 1, verde = 2, vermelho = 4, tamanho = 2, ref_x = 320, ref_y = 465/435, ordem_impressao = 4/5)</i>. Utilizado 2x.
 
-* Janelas da casa (marrom) -> <i>set_quadrado_dp</i> 2x
+* Janelas da casa (marrom) -> <i>set_quadrado_dp (azul = 1, verde = 2, vermelho = 4, tamanho = 2, ref_x = 360/280, ref_y = 365, ordem_impressao = 2/3)</i>. Utilizado 2x.
 
-* Estrutura da casa (branco) -> <i>set_quadrado_dp</i> 1x
+* Estrutura da casa (branco) -> <i>set_quadrado_dp (azul = 7, verde = 7, vermelho = 7, tamanho = 15, ref_x = 320, ref_y = 400, ordem_impressao = 12)</i>. Utilizado 1x.
 
 Com o resultado da imagem final, foi possível comprovar a integridade dos dados recebidos e processados pelas funções da biblioteca, além da correta comunicação biblioteca + driver.
 
 <h3>Outros testes</h3>
 
-Também foram realizados testes para verificar a função de remover da tela todos elementos utilizados e as verificações de erros de dados recebidos por parâmetro nas funções. Para os erros, foram testadas as funções <i>set_cor_background_wbr</i>, <i>set_sprite_wbr</i> e <i>set_quadrado_dp</i>.
+Também foram realizados testes para verificar a função *limpar_tela()*,que remove da tela todos elementos utilizados, e as verificações de erros de dados recebidos por parâmetro nas funções. Para os erros, foram testadas as funções <i>set_cor_background_wbr</i>, <i>set_sprite_wbr</i> e <i>set_quadrado_dp</i>.
 
-* Limpando a tela.
+* Limpando a tela. Função *limpar_tela()* é executada removendo todos os elementos utilizados.
 
 <p align="center">
   <img src="Gifs/limpar_tela.gif" width = "400" />
 </p>
 <p align="center"><strong>Remove da tela elementos utilizados</strong></p>
 
-* Passando *vermelho* maior que o permitido para <i>set_cor_background_wbr</i>.
+* Passando *vermelho* maior que o permitido para <i>set_cor_background_wbr</i>. set_cor_background_wbr (azul = 0, verde = 0, <b>vermelho = 9</b>);
 
 <p align="center">
   <img src="Gifs/ErroCorBackground.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 
-* Passando <i>offset</i> menor que o permitido para <i>set_sprite_wbr</i>.
+* Passando <i>offset</i> menor que o permitido para <i>set_sprite_wbr</i>. set_sprite_wbr (ativa_sprite = 1, cord_x = 320, cord_y = 445, <b>offset = -3</b>, registrador = 1)
 
 <p align="center">
   <img src="Gifs/ErroSprite.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 
-* Passando <i>ref_x</i> e <i>ref_y</i> menor que o permitido de <i>tamanho</i> 1 para <i>set_quadrado_dp</i>.
+* Passando <i>ref_x</i> e <i>ref_y</i> menor que o permitido de <i>tamanho</i> 1 para <i>set_quadrado_dp</i>. set_quadrado_dp (azul = 1, verde = 2, vermelho = 4, <b>tamanho = 1</b>, <b>ref_x = 3</b>, <b>ref_y = 2</b>, ordem_impressao = 0)
 
 <p align="center">
   <img src="Gifs/ErrroQuadrado.gif" width = "400" />
 </p>
 <p align="center"><strong>Função retorna mensagem indicativa ao erro capturado</strong></p>
 
-</div>
-</div>
-
-<div id="conclusao"> 
-<h2> Conclusão</h2>
-<div align="justify">
-
-O desenvolvimento de uma forma de comunicação entre a GPU implementada na FPGA e o HPS, por meio do código em linguagem C no kit de desenvolvimento DE1-SoC, provou ser eficiente e funcional. Durante o processo de implementação, todos os requisitos estabelecidos foram devidamente atendidos, utilizando da arquitetura da placa e da GPU.
-
 A integração entre um driver que recebe informações do espaço de usuário e de uma biblioteca, que facilite o trabalho do programador no desenvolvimento de projetos que necessitem dos recursos desponibilizados pela GPU se mostrou eficaz. Nenhuma incoerência ou problema de desempenho foi encontrado neste quesito.
 
-Por fim, o desenvolvimento de uma imagem que utilize todos os elementos desenvolvidos, além de todas as funcionalidades disponíveis na GPU, comprova toda a integridade do sistema e sua completa funcionalidade.
+O desenvolvimento de uma imagem que utilize todos os elementos desenvolvidos, além de todas as funcionalidades disponíveis na GPU, comprova toda a integridade do sistema e sua completa funcionalidade.
 
 </div>
 </div>

@@ -165,6 +165,24 @@ Nesta seção, discutiremos a arquitetura da GPU utilizada no projeto, suas espe
 
 A GPU usada neste projeto possui capacidade de renderizar uma tela de 640x480 pixels que será projetada em monitor com o padrão VGA possuindo frequência de 60 quadros por segundo (*QPS* ou *FPS*), podendo projetar nessa tela, além de uma cor de fundo, 2 tipos de polígonos convexos (quadrado e triângulo) ou um conjunto predefinido de sprites (já previamente alocados em memória física).
 
+<h3>Datapath</h3>
+
+<p align="center">
+  <img src="Imagens/datapath.png" width = "600" />
+</p>
+<p align="center"><strong> Fluxo de dados ao longo do projeto</strong></p>
+
+Para o controle da GPU foram utilizadas 2 estruturas gerais: a biblioteca, responsável por garantir fácil acesso às funções práticas que serão requisitadas por outras aplicações, e o Driver, que fica responsável por viabilizar a comunicação do processador gráfico.
+Ao inicio de qualquer aplicação que utilize esse projeto é esperado que se utilize para acesso às funções da GPU a biblioteca, que será explicada em detalhes mais afrente, nela encontraremos as funções que serão utilizadas na prática, contudo são alienadas de sua complexidade natural, de forma a permitir uma interface simples para execuções complexas. Essa simplicidade por sua vez ajuda a minimizar possíveis erros e bugs derivados de um código pouco legível, tratando-se de um importante recurso para otimização da produtividade.
+A segunda estrutura é o Driver, e se a biblioteca aplica uma interface, é o Driver o real implementador, aqui é onde as solicitações serão lidas e as informações, por consequência, traduzidas. Diferentemente da biblioteca, nessa estrutura a simplicidade, apesar de não totalmente abandonada, não é prioridade. Em caso de algum projeto derivado desejar acessá-lo diretamente, recomenda-se uma maior atenção.
+Tomando-se um comando de exemplo, em caso de uso ordinário, ele será feito utilizando a biblioteca do projeto, que inicializará o Driver e direcionará o dispositivo a ser lido. Então o driver tratará de se comunicar com a GPU desenvolvida pelo projeto de GPU do TCC de Gabriel (que pode ser lido aqui) lhe enviando as informações necessárias, sendo elas:
+  <ul>
+    <li>dataA; para opcodes e endereçamento do Banco de Registrador e Memórias (32 bits)</li>
+    <li>dataB; para o envio de dados a serem armazenados e/ou atualizados (32 bits)</li>
+    <li>wrreg; para indicar a escrita no buffer de instrução (1 bit)</li>  
+  </ul>
+A GPU por sua vez recebendo esses dados se encarrega de gerar um sinal para o monitor e um bit de resposta wrfull para o Driver, indicando se o buffer de instrução (usado na comunicação entre o kernel space e user space) está cheio ou não.
+
 <h3>Módulos internos</h3>
 
 A GPU possui um conjunto de módulos internos, cada um resposável por uma função específica, sendo necessário o funcionamento conjunto de cada uma dessas estruturas para a geração de um novo quadro (ou *Frame*).

@@ -5,17 +5,20 @@
 <div id="sobre-o-projeto"> 
 <h2> Sobre o Projeto</h2>
 
-O discente Gabriel de Sá Barreto da Universidade Estadual de Feira de Santana (UEFS), desenvolveu em suas atividades de iniciação científica e trabalho de conclusão de curso um processador gráfico que permite o desenho de dois tipos de polígonos convexos (quadrados e triângulos), além de uma determinada quantidade de sprites. Além disso é possível controlar e mover elementos exibidos em um monitor VGA de resolução 680x480 pixels.
+O discente Gabriel de Sá Barreto, da Universidade Estadual de Feira de Santana (UEFS), desenvolveu, durante suas atividades de iniciação científica e trabalho de conclusão de curso, uma unidade de processamento gráfico (GPU). O objetivo final deste projeto é exibir uma imagem ilustrativa em um monitor do tipo VGA, utilizando todos os elementos e funções disponíveis na GPU.
 
-Em seu projeto, Gabriel utilizou a plataforma NIOS II para processamento das instruções recebidas, onde a mesma, foi embarcada na mesma FPGA em que estava o processador gráfico. Entretanto, na plataforma de desenvolvimento DE1-SOC, a NIOS II não é necessária devido a presença do processador ARM (HPS). Isto no entanto gera um problema: não existe comunicação entre o processador gráfico implementado na FPGA e o HPS.
+Para alcançar esse objetivo, também foi desenvolvido um driver para comunicação entre a GPU e o HPS embarcados na placa DE1-SoC, utilizada no desenvolvimento. Além disso, foi criada uma biblioteca para facilitar a programação e a utilização das funcionalidades da GPU. Todos os itens a serem implementados foram desenvolvidos utilizando a linguagem de programação C.
 
-Este projeto tem como objetivo resolver este problema desenvolvendo módulos kernel no HPS para o processador gráfico, além de desenvolver uma biblioteca C para facilitar o trabalho do programador no uso dos elementos e funcionalidades disponíveis.
+Os requisitos para a elaboração do projeto são apresentados a seguir:
 
-Os requisitos para elaboração do sistema são apresentados a seguir:
-
-* O código carregado na DE1-SoC deve ser feito em linguagem C;
-* A biblioteca deve conter no mínimo uma função para cada Instrução do Processador Gráfico;
-* Código em linguagem C demostrando a utilização de todos os elementos disponíveis em uma imagem que deve ser transmitida para o monitor CRT através da saída VGA.
+* Desenvolver uma imagem ilustrativa de uma casa em área aberta, utilizando todos os elementos e funções possíveis da GPU.
+* Itens que devem estar presentes na imagem: 
+  * Background para representar o céu da paisagem.
+  * Uso dos dois tipos de polígonos convexos disponíveis (quadrados e triângulos) para construção da casa e sol.
+  * Edição do background para construções de nuvens e gramas.
+  * Utilização de sprites para composição da imagem.
+* O driver deve conter as funções essenciais de comunicação entre User Space e Kernel Space, são elas: inicialização, encerramento, fechamento, abertura, leitura e escrita.
+* A biblioteca deve conter funções que, além de utilizarem todas as funcionalidades da GPU, possam facilitar ações extras, como limpar instantaneamente toda a imagem gerada no monitor e desabilitar itens criados de forma unitária.
 
 </div>
 

@@ -252,7 +252,7 @@ Com as instruções já devidamente alocadas em seus respectivos barramentos é 
 <h3>Datapath</h3>
 
 <p align="center">
-  <img src="Imagens/datapath.png" width = "600" />
+  <img src="Imagens/datapath.png" />
 </p>
 <p align="center"><strong> Fluxo de dados ao longo do projeto</strong></p>
 
